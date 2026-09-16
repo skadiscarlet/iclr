@@ -1,0 +1,14 @@
+{
+  "evidence_id": "ev-dto",
+  "display_path": "src/PairHolder.java",
+  "span": {
+    "start_line": 1,
+    "end_line": 5
+  },
+  "content_sha256": "sha256:ac6577fda4583724c788ec3f92867003e3dd9b55b1eb04cb407855ab4628bbba",
+  "source_category": "source_snippet",
+  "material_kind": "fixture",
+  "generation_id": null,
+  "source_revision": null,
+  "relative_read_path": "evidence/ev-dto.body"
+}

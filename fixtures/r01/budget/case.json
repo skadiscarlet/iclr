@@ -1,0 +1,14 @@
+{
+  "case_id": "fixture-budget",
+  "visible_context": "Synthetic five-file sequence used to exhaust max_observations=4.",
+  "allowed_evidence_ids": [
+    "ev-step-1",
+    "ev-step-2",
+    "ev-step-3",
+    "ev-step-4",
+    "ev-step-5"
+  ],
+  "split": "dev_pilot",
+  "material_kind": "fixture",
+  "project_family": "synthetic-fixture"
+}

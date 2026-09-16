@@ -1,0 +1,9 @@
+class AccountStore {
+  AccountRecord load(String accountId, String callerId) {
+    AccountRecord rec = lookup(accountId);
+    if (!rec.ownerId.equals(callerId)) {
+      throw new IllegalStateException("owner mismatch");
+    }
+    return rec;
+  }
+}

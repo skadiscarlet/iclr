@@ -47,3 +47,17 @@
 ## 当前执行默认值
 
 若任务同时包含工程实现和论文表达，当前阶段先完成并验证工程实现，再把得到的事实以“支持 / 不支持 / 尚不确定”同步到论文叙事；不得反向依据论文期望篡改实验判定。
+
+## NAACL 2027 / SBS 并行研究轨（R01+）
+
+本仓库另有 NAACL 2027 方向：SBS（具体约束失效假设 + 证据状态）。该方向**不替换**上文 EGSI / ICLR 原型规则。
+
+R01 范围：仓库盘点、可回退整理、actor/evaluator 数据隔离、离线 fixture 回放。R01 不训练 Q/V，不调用模型 API，不计算检测 accuracy/F1，不声称新 CVE 发现。
+
+执行时额外遵守：
+
+1. 规范入口：`plans/rounds/R01.md`（本轮任务书）、`plans/ROADMAP_NAACL2027.md`、`docs/r01_research_contract.md`、`docs/r01_data_protocol.md`。
+2. Actor 可见对象不得包含 CVE、gold label、patch 或修复配对；审查运行器不得读取 evaluator 根或 actor root 之外的路径。
+3. R01 接触过的真实样本一律 `split=dev_pilot`；`human_verified` 不得由 agent 自报。
+4. `review_status=accepted` 只能由后续负责人审阅后变更。
+5. 不得执行 `git reset --hard`、`git clean -fd`、`git push --force` 或改写公共历史。

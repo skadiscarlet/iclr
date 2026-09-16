@@ -1,0 +1,14 @@
+{
+  "evidence_id": "ev-step-3",
+  "display_path": "src/Step3.java",
+  "span": {
+    "start_line": 1,
+    "end_line": 2
+  },
+  "content_sha256": "sha256:71c5d72baccfdb86021058e70f0357cb7222affee45c3531a7845668b3f7e8ea",
+  "source_category": "source_snippet",
+  "material_kind": "fixture",
+  "generation_id": null,
+  "source_revision": null,
+  "relative_read_path": "evidence/ev-step-3.body"
+}

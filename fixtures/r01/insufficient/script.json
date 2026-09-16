@@ -1,0 +1,34 @@
+{
+  "observation_order": [
+    "ev-dto"
+  ],
+  "initial_hypothesis": {
+    "hypothesis_id": "h1",
+    "entities": [
+      "PairHolder"
+    ],
+    "security_relation": "left and right must refer to the same owner",
+    "relation_source": "fixture_script",
+    "support_refs": [],
+    "counter_refs": [],
+    "unknowns": [
+      "no method that uses left/right together"
+    ],
+    "status": "open"
+  },
+  "updates": {
+    "ev-dto": {
+      "hypothesis_id": "h1",
+      "add_support": [],
+      "add_counter": [],
+      "add_unknowns": [
+        "no method that uses left/right together"
+      ],
+      "remove_unknowns": [],
+      "status": "open",
+      "terminal": null,
+      "termination_reason": null
+    }
+  },
+  "script_kind": "fixture_script"
+}

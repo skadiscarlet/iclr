@@ -1,0 +1,10 @@
+{
+  "case_id": "fixture-insufficient",
+  "visible_context": "Synthetic DTO only; relation cannot be decided.",
+  "allowed_evidence_ids": [
+    "ev-dto"
+  ],
+  "split": "dev_pilot",
+  "material_kind": "fixture",
+  "project_family": "synthetic-fixture"
+}
