@@ -1,0 +1,201 @@
+schema_version: "1.0"
+name: EGSI_EXECUTABLE_TYPED_AUDIT_AUTOMATON
+initial_state: BOOTSTRAP
+terminal_states: [REPORT, FAILED_INVARIANT]
+
+outcomes: [CONFIRMED, REJECTED, ABSTAIN]
+stop_reasons:
+  - PROOF_COMPLETE
+  - PROOF_CONTRADICTION
+  - BOUNDED_NEGATIVE_SEARCH
+  - LOW_EXPECTED_VALUE
+  - BUDGET_EXHAUSTED
+  - TOOL_UNAVAILABLE
+  - TIMEOUT
+  - POLICY_UNCERTAIN
+
+state_ownership:
+  current_focus: orchestrator
+  observations: program_analysis_executor
+  facts: evidence_curator
+  derived_claims: semantic_security_agent
+  hypotheses: hypothesis_agent
+  evidence_graph: evidence_curator
+  unknowns: hypothesis_agent
+  proof_state: verification_agent
+  capability_matrix: orchestrator
+  budget: orchestrator
+  bounded_history: state_store
+
+global_invariants:
+  - id: I1_FACT_RECEIPT
+    rule: every fact references at least one replayable receipt
+  - id: I2_LLM_NOT_FACT
+    rule: model output enters derived_claim or hypothesis before fact promotion
+  - id: I3_UNKNOWN_RESOLUTION
+    rule: resolved unknown references positive evidence or bounded-negative certificate
+  - id: I4_EVIDENCE_DELTA
+    rule: hypothesis update references evidence committed in the current or prior state
+  - id: I5_BUDGET_MONOTONIC
+    rule: resource budgets are monotonically non-increasing except logged system refunds
+  - id: I6_CONFIRMED_CERTIFICATE
+    rule: CONFIRMED satisfies the declared proof template and minimum certificate level
+  - id: I7_REJECTED_CERTIFICATE
+    rule: REJECTED has refutation, contradiction, or bounded-negative certificate
+  - id: I8_VERSION_COMPATIBILITY
+    rule: merged evidence uses the same repository snapshot and compatible build profile
+  - id: I9_EXACT_DUPLICATE
+    rule: identical action fingerprint is not re-executed without input scope or tool version change
+  - id: I10_ABSTAIN_AVAILABLE
+    rule: terminate with ABSTAIN is always a legal candidate
+
+states:
+  BOOTSTRAP:
+    owner: orchestrator
+    enter_actions: [freeze_snapshot, initialize_budget, create_event_log]
+    success_event: SNAPSHOT_FROZEN
+    failure_event: BOOTSTRAP_FAILED
+  INDEX:
+    owner: program_analysis_executor
+    enter_actions: [build_repository_index, profile_capabilities]
+    success_event: INDEX_READY
+    failure_event: INDEX_PARTIAL
+  SURFACE_MAP:
+    owner: surface_mapper
+    enter_actions: [enumerate_entrypoints, map_trust_boundary, locate_sensitive_asset]
+    success_event: SURFACE_READY
+    failure_event: SURFACE_PARTIAL
+  SEED_HYPOTHESES:
+    owner: hypothesis_agent
+    enter_actions: [generate_hypothesis, derive_proof_obligations, derive_unknowns]
+    success_event: HYPOTHESES_READY
+    failure_event: NO_HYPOTHESIS
+  SCHEDULE_BRANCH:
+    owner: policy_selector
+    enter_actions: [select_hypothesis, allocate_branch_budget]
+    success_event: BRANCH_SELECTED
+    failure_event: NO_ACTIVE_BRANCH
+  COMPILE_CANDIDATES:
+    owner: candidate_compiler
+    enter_actions: [expand_proof_frontier, bind_primitive_target, deduplicate_candidates]
+    success_event: CANDIDATES_READY
+    failure_event: CANDIDATES_EMPTY
+  SELECT_ACTION:
+    owner: policy_selector
+    enter_actions: [apply_hard_legality_mask, score_candidates, select_action]
+    success_event: ACTION_SELECTED
+    failure_event: NO_LEGAL_ACTION
+  EXECUTE_ACTION:
+    owner: program_analysis_executor
+    enter_actions: [route_tool, execute_typed_action]
+    success_event: OBSERVATION_AVAILABLE
+    failure_event: TOOL_FAILED
+  NORMALIZE_OBSERVATION:
+    owner: evidence_curator
+    enter_actions: [normalize_observation, classify_empty_partial_failed]
+    success_event: OBSERVATION_NORMALIZED
+    failure_event: OBSERVATION_INVALID
+  COMMIT_EVIDENCE:
+    owner: evidence_curator
+    enter_actions: [verify_receipt, commit_fact_or_claim, link_evidence]
+    success_event: EVIDENCE_COMMITTED
+    failure_event: EVIDENCE_REJECTED
+  UPDATE_BELIEF:
+    owner: evidence_curator
+    enter_actions: [resolve_unknowns, update_proof_state, calibrate_hypotheses]
+    success_event: BELIEF_UPDATED
+    failure_event: CONTRADICTION_OPENED
+  EVIDENCE_GATE:
+    owner: policy_selector
+    enter_actions: [estimate_value_of_information, select_control]
+    success_event: CONTROL_SELECTED
+    failure_event: POLICY_UNCERTAIN
+  STATIC_VALIDATE:
+    owner: verification_agent
+    enter_actions: [replay_receipts, verify_path_constraints, check_proof_obligations]
+    success_event: STATIC_CERTIFICATE_READY
+    failure_event: STATIC_CERTIFICATE_FAILED
+  DYNAMIC_VALIDATE:
+    owner: verification_agent
+    enter_actions: [build_reproducer, run_reproducer, run_patched_negative]
+    success_event: DYNAMIC_CERTIFICATE_READY
+    failure_event: DYNAMIC_VALIDATION_FAILED
+  VERDICT:
+    owner: verification_agent
+    enter_actions: [issue_certificate_or_abstain]
+    success_event: VERDICT_ISSUED
+    failure_event: VERDICT_INCOMPLETE
+  RECOVER_TOOL:
+    owner: orchestrator
+    enter_actions: [record_partial_receipt, select_fallback_tool_or_scope]
+    success_event: RECOVERY_READY
+    failure_event: RECOVERY_EXHAUSTED
+  REPORT:
+    owner: reporter
+    enter_actions: [assemble_proof_chain, render_outcome, close_episode]
+    success_event: EPISODE_CLOSED
+    failure_event: REPORT_FAILED
+  FAILED_INVARIANT:
+    owner: orchestrator
+    enter_actions: [rollback_checkpoint, emit_invariant_record]
+
+transitions:
+  - {from: BOOTSTRAP, event: SNAPSHOT_FROZEN, to: INDEX}
+  - {from: BOOTSTRAP, event: BOOTSTRAP_FAILED, to: FAILED_INVARIANT}
+  - {from: INDEX, event: INDEX_READY, to: SURFACE_MAP}
+  - {from: INDEX, event: INDEX_PARTIAL, to: SURFACE_MAP}
+  - {from: SURFACE_MAP, event: SURFACE_READY, to: SEED_HYPOTHESES}
+  - {from: SURFACE_MAP, event: SURFACE_PARTIAL, to: SEED_HYPOTHESES}
+  - {from: SEED_HYPOTHESES, event: HYPOTHESES_READY, to: SCHEDULE_BRANCH}
+  - {from: SEED_HYPOTHESES, event: NO_HYPOTHESIS, to: VERDICT, guard: outcome_is_abstain}
+  - {from: SCHEDULE_BRANCH, event: BRANCH_SELECTED, to: COMPILE_CANDIDATES}
+  - {from: SCHEDULE_BRANCH, event: NO_ACTIVE_BRANCH, to: VERDICT}
+  - {from: COMPILE_CANDIDATES, event: CANDIDATES_READY, to: SELECT_ACTION}
+  - {from: COMPILE_CANDIDATES, event: CANDIDATES_EMPTY, to: EVIDENCE_GATE}
+  - {from: SELECT_ACTION, event: ACTION_SELECTED, to: EXECUTE_ACTION}
+  - {from: SELECT_ACTION, event: NO_LEGAL_ACTION, to: EVIDENCE_GATE}
+  - {from: EXECUTE_ACTION, event: OBSERVATION_AVAILABLE, to: NORMALIZE_OBSERVATION}
+  - {from: EXECUTE_ACTION, event: TOOL_FAILED, to: RECOVER_TOOL}
+  - {from: NORMALIZE_OBSERVATION, event: OBSERVATION_NORMALIZED, to: COMMIT_EVIDENCE}
+  - {from: NORMALIZE_OBSERVATION, event: OBSERVATION_INVALID, to: SELECT_ACTION}
+  - {from: COMMIT_EVIDENCE, event: EVIDENCE_COMMITTED, to: UPDATE_BELIEF}
+  - {from: COMMIT_EVIDENCE, event: EVIDENCE_REJECTED, to: SELECT_ACTION}
+  - {from: UPDATE_BELIEF, event: BELIEF_UPDATED, to: EVIDENCE_GATE}
+  - {from: UPDATE_BELIEF, event: CONTRADICTION_OPENED, to: EVIDENCE_GATE}
+  - {from: EVIDENCE_GATE, event: CONTROL_CONTINUE, to: COMPILE_CANDIDATES}
+  - {from: EVIDENCE_GATE, event: CONTROL_BRANCH, to: SCHEDULE_BRANCH}
+  - {from: EVIDENCE_GATE, event: CONTROL_BACKTRACK, to: SCHEDULE_BRANCH}
+  - {from: EVIDENCE_GATE, event: CONTROL_VALIDATE, to: STATIC_VALIDATE}
+  - {from: EVIDENCE_GATE, event: CONTROL_TERMINATE, to: VERDICT}
+  - {from: EVIDENCE_GATE, event: POLICY_UNCERTAIN, to: COMPILE_CANDIDATES, guard: use_greedy_fallback}
+  - {from: STATIC_VALIDATE, event: STATIC_CERTIFICATE_READY, to: DYNAMIC_VALIDATE, guard: dynamic_required_and_available}
+  - {from: STATIC_VALIDATE, event: STATIC_CERTIFICATE_READY, to: VERDICT, guard: static_level_sufficient}
+  - {from: STATIC_VALIDATE, event: STATIC_CERTIFICATE_FAILED, to: SCHEDULE_BRANCH}
+  - {from: DYNAMIC_VALIDATE, event: DYNAMIC_CERTIFICATE_READY, to: VERDICT}
+  - {from: DYNAMIC_VALIDATE, event: DYNAMIC_VALIDATION_FAILED, to: VERDICT, guard: outcome_is_abstain}
+  - {from: VERDICT, event: VERDICT_ISSUED, to: REPORT}
+  - {from: VERDICT, event: VERDICT_INCOMPLETE, to: REPORT, guard: outcome_is_abstain}
+  - {from: RECOVER_TOOL, event: RECOVERY_READY, to: SELECT_ACTION}
+  - {from: RECOVER_TOOL, event: RECOVERY_EXHAUSTED, to: EVIDENCE_GATE}
+
+hard_legality:
+  factors: [schema, target_exists, precondition, branch_condition, budget_lower_bound, exact_duplicate]
+  never_hard_mask:
+    - low_expected_information_gain
+    - low_historical_tool_success
+    - low_unknown_priority
+    - empty_previous_static_result
+    - semantic_irrelevance_estimate
+
+certificate_levels:
+  C1_STATIC: provenance-complete static proof
+  C2_EXECUTABLE: build or test reproduces invariant violation
+  C3_IMPACT: end-to-end reproducer or proof of impact
+  C4_PATCH_DIFFERENTIAL: paired fix removes behavior without unrelated regression
+
+budget_dimensions:
+  token_budget: {unit: tokens, monotonic: true}
+  tool_call_budget: {unit: calls, monotonic: true}
+  wall_time_budget: {unit: seconds, monotonic: true}
+  analysis_budget: {unit: analysis_units, monotonic: true}
+  branch_budget: {unit: branches, monotonic: true}

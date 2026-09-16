@@ -1,0 +1,161 @@
+#!/bin/sh
+# Offline maintenance only. Runtime launchers never invoke this script.
+set -eu
+
+production_root=/home/furina/iclr
+compiler=/usr/bin/gcc
+python=/usr/bin/python3
+mode=production
+root=$production_root
+output_dir=$production_root/scripts
+test_private_key=
+
+usage() {
+    printf '%s\n' \
+        'usage: rebuild_locked_launchers' \
+        '   or: rebuild_locked_launchers --synthetic-output-dir ABSOLUTE_SCRIPTS_DIR --test-private-key-pem ABSOLUTE_MODE_0600_PEM' >&2
+    exit 64
+}
+
+if [ "$#" -ne 0 ]; then
+    [ "$#" -eq 4 ] || usage
+    [ "$1" = "--synthetic-output-dir" ] || usage
+    output_dir=$2
+    [ "$3" = "--test-private-key-pem" ] || usage
+    test_private_key=$4
+    case "$output_dir" in /*) ;; *) usage ;; esac
+    case "$test_private_key" in /*) ;; *) usage ;; esac
+    [ -d "$output_dir" ] || usage
+    [ -f "$test_private_key" ] || usage
+    physical_output=$(/usr/bin/realpath "$output_dir")
+    [ "$physical_output" = "$output_dir" ] || usage
+    [ "$(/usr/bin/basename "$output_dir")" = scripts ] || usage
+    root=$(/usr/bin/dirname "$output_dir")
+    mode=synthetic
+fi
+
+case "$root" in *[!A-Za-z0-9_./-]*|'') usage ;; esac
+
+source_file=$root/scripts/locked_launcher.c
+helper=$root/scripts/build_native_rsa_material.py
+configs=$root/configs
+receipt=$output_dir/run_test_receipt
+report=$output_dir/rerun_first_case_hard_gate
+verifier=$output_dir/verify_first_case_hard_gate
+live_run=$output_dir/run_fail_fast_enrich
+live_verify=$output_dir/verify_fail_fast_enrich
+receipt_tmp=$output_dir/.run_test_receipt.native.tmp
+report_tmp=$output_dir/.rerun_first_case_hard_gate.native.tmp
+verifier_tmp=$output_dir/.verify_first_case_hard_gate.native.tmp
+live_run_tmp=$output_dir/.run_fail_fast_enrich.native.tmp
+live_verify_tmp=$output_dir/.verify_fail_fast_enrich.native.tmp
+record=$configs/native-signer-build-record.json
+record_tmp=$configs/.native-signer-build-record.json.tmp
+private_dir=
+private_header=
+public_header=
+public_material=
+
+cleanup() {
+    /usr/bin/rm -f \
+        "$receipt_tmp" "$report_tmp" "$verifier_tmp" \
+        "$live_run_tmp" "$live_verify_tmp" "$record_tmp"
+    if [ -n "$private_header" ]; then /usr/bin/rm -f "$private_header"; fi
+    if [ -n "$public_header" ]; then /usr/bin/rm -f "$public_header"; fi
+    if [ -n "$public_material" ]; then /usr/bin/rm -f "$public_material"; fi
+    if [ -n "$private_dir" ]; then /usr/bin/rm -rf "$private_dir"; fi
+}
+trap cleanup EXIT HUP INT TERM
+umask 077
+
+[ -f "$source_file" ] || usage
+[ -f "$helper" ] || usage
+[ -d "$configs" ] || usage
+private_parent=/tmp/egsi-native-build
+/usr/bin/mkdir -p "$private_parent"
+/usr/bin/chmod 0700 "$private_parent"
+private_dir=$(/usr/bin/mktemp -d "$private_parent/build.XXXXXX")
+/usr/bin/chmod 0700 "$private_dir"
+TMPDIR=$private_dir
+export TMPDIR
+private_header=$private_dir/signer.h
+public_header=$private_dir/verifier.h
+public_material=$private_dir/public-material.json
+
+set -- material \
+    --root "$root" \
+    --private-header "$private_header" \
+    --public-header "$public_header" \
+    --public-material "$public_material"
+if [ "$mode" = synthetic ]; then
+    set -- "$@" --test-private-key-pem "$test_private_key"
+fi
+"$python" -I -B "$helper" "$@"
+unset test_private_key
+
+compile_common='-std=c11 -Os -static -nostdlib -nostartfiles -nodefaultlibs -ffreestanding -fno-builtin -fno-stack-protector -fno-pie -no-pie -fno-asynchronous-unwind-tables -fno-unwind-tables'
+# shellcheck disable=SC2086
+"$compiler" $compile_common \
+    -Wl,--build-id=none -Wl,-z,noexecstack -Wl,--fatal-warnings -s \
+    -include "$private_header" -DLAUNCH_KIND=1 \
+    -o "$receipt_tmp" "$source_file"
+# shellcheck disable=SC2086
+"$compiler" $compile_common \
+    -Wl,--build-id=none -Wl,-z,noexecstack -Wl,--fatal-warnings -s \
+    -include "$private_header" -DLAUNCH_KIND=2 \
+    -o "$report_tmp" "$source_file"
+# shellcheck disable=SC2086
+"$compiler" $compile_common \
+    -Wl,--build-id=none -Wl,-z,noexecstack -Wl,--fatal-warnings -s \
+    -include "$private_header" -DLAUNCH_KIND=4 \
+    -o "$live_run_tmp" "$source_file"
+
+# Delete the only generated file containing d immediately after signer builds.
+/usr/bin/rm -f "$private_header"
+private_header=
+
+receipt_sha=sha256:$(/usr/bin/sha256sum "$receipt_tmp" | /usr/bin/cut -d' ' -f1)
+report_sha=sha256:$(/usr/bin/sha256sum "$report_tmp" | /usr/bin/cut -d' ' -f1)
+live_run_sha=sha256:$(/usr/bin/sha256sum "$live_run_tmp" | /usr/bin/cut -d' ' -f1)
+
+# shellcheck disable=SC2086
+"$compiler" $compile_common \
+    -Wl,--build-id=none -Wl,-z,noexecstack -Wl,--fatal-warnings -s \
+    -include "$public_header" -DLAUNCH_KIND=3 \
+    -o "$verifier_tmp" "$source_file"
+# shellcheck disable=SC2086
+"$compiler" $compile_common \
+    -Wl,--build-id=none -Wl,-z,noexecstack -Wl,--fatal-warnings -s \
+    -include "$public_header" -DLAUNCH_KIND=5 \
+    -o "$live_verify_tmp" "$source_file"
+/usr/bin/rm -f "$public_header"
+public_header=
+
+for binary in "$receipt_tmp" "$report_tmp" "$verifier_tmp" "$live_run_tmp" "$live_verify_tmp"; do
+    ! /usr/bin/readelf -lW "$binary" | /usr/bin/grep -q INTERP
+    /usr/bin/readelf -dW "$binary" | /usr/bin/grep -q 'There is no dynamic section'
+done
+
+/usr/bin/chmod 0111 "$receipt_tmp" "$report_tmp" "$live_run_tmp"
+/usr/bin/chmod 0555 "$verifier_tmp" "$live_verify_tmp"
+/usr/bin/mv -f "$receipt_tmp" "$receipt"
+/usr/bin/mv -f "$report_tmp" "$report"
+/usr/bin/mv -f "$verifier_tmp" "$verifier"
+/usr/bin/mv -f "$live_run_tmp" "$live_run"
+/usr/bin/mv -f "$live_verify_tmp" "$live_verify"
+
+"$python" -I -B "$helper" record \
+    --root "$root" \
+    --public-material "$public_material" \
+    --receipt-sha256 "$receipt_sha" \
+    --report-sha256 "$report_sha" \
+    --live-run-sha256 "$live_run_sha" \
+    --output "$record_tmp"
+/usr/bin/chmod 0444 "$record_tmp"
+/usr/bin/mv -f "$record_tmp" "$record"
+
+/usr/bin/rm -f "$public_material"
+public_material=
+/usr/bin/rmdir "$private_dir"
+private_dir=
+trap - EXIT HUP INT TERM

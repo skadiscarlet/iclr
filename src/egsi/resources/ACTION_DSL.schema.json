@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/egsi/action-dsl.schema.json",
+  "title": "EGSI Typed Investigation Action",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "action_id",
+    "episode_id",
+    "branch_id",
+    "actor_role",
+    "goal",
+    "operation",
+    "target",
+    "resolves_unknowns",
+    "preconditions",
+    "expected_evidence_type",
+    "tool_class",
+    "budget_cap",
+    "idempotency_key"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "action_id": {"type": "string", "pattern": "^A-[A-Za-z0-9._-]+$"},
+    "episode_id": {"type": "string", "minLength": 1},
+    "branch_id": {"type": "string", "minLength": 1},
+    "actor_role": {
+      "enum": [
+        "orchestrator",
+        "surface_mapper",
+        "hypothesis_agent",
+        "candidate_compiler",
+        "policy_selector",
+        "program_analysis_executor",
+        "semantic_security_agent",
+        "evidence_curator",
+        "verification_agent",
+        "reporter"
+      ]
+    },
+    "hypothesis_id": {"type": ["string", "null"]},
+    "obligation_id": {"type": ["string", "null"]},
+    "goal": {
+      "enum": [
+        "ESTABLISH_ENTRY",
+        "ESTABLISH_ATTACKER_CONTROL",
+        "ESTABLISH_REACHABILITY",
+        "CHECK_SECURITY_INVARIANT",
+        "CHECK_GUARD_OR_SANITIZER",
+        "ESTABLISH_IMPACT",
+        "FALSIFY_HYPOTHESIS",
+        "VALIDATE_FINDING",
+        "CONTROL_SEARCH"
+      ]
+    },
+    "operation": {
+      "enum": [
+        "enumerate_entrypoints",
+        "map_trust_boundary",
+        "locate_sensitive_asset",
+        "find_callers",
+        "find_callees",
+        "find_references",
+        "inspect_dispatch",
+        "compare_peer",
+        "trace_flow",
+        "find_source",
+        "find_sink",
+        "track_alias",
+        "track_field",
+        "verify_path_constraints",
+        "find_guard",
+        "trace_identity",
+        "check_auth_relation",
+        "find_sanitizer",
+        "check_lifecycle",
+        "check_ownership",
+        "check_resource_control",
+        "classify_operation",
+        "infer_invariant",
+        "update_hypothesis",
+        "falsify_hypothesis",
+        "validate_finding",
+        "reproduce_finding",
+        "open_or_switch_branch",
+        "backtrack",
+        "terminate"
+      ]
+    },
+    "target": {"$ref": "#/$defs/target"},
+    "arguments": {"type": "object"},
+    "resolves_unknowns": {
+      "type": "array",
+      "items": {"type": "string"},
+      "uniqueItems": true
+    },
+    "preconditions": {
+      "type": "array",
+      "items": {"type": "string"},
+      "uniqueItems": true
+    },
+    "expected_evidence_type": {"type": "string", "minLength": 1},
+    "tool_class": {
+      "enum": [
+        "repository_index",
+        "static_query",
+        "graph_query",
+        "semantic_model",
+        "history_query",
+        "build_system",
+        "test_runner",
+        "dynamic_harness",
+        "control_only"
+      ]
+    },
+    "budget_cap": {"$ref": "#/$defs/budget"},
+    "fallback_operations": {
+      "type": "array",
+      "items": {"type": "string"},
+      "uniqueItems": true,
+      "maxItems": 5
+    },
+    "idempotency_key": {"type": "string", "pattern": "^sha256:[0-9a-fA-F.]+$"},
+    "metadata": {"type": "object"}
+  },
+  "$defs": {
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "id"],
+      "properties": {
+        "kind": {
+          "enum": [
+            "repository",
+            "component",
+            "function",
+            "symbol",
+            "value",
+            "field",
+            "type",
+            "path",
+            "resource",
+            "identity",
+            "hypothesis",
+            "branch",
+            "checkpoint",
+            "episode"
+          ]
+        },
+        "id": {"type": "string", "minLength": 1},
+        "location": {"type": ["string", "null"]},
+        "version": {"type": ["string", "null"]}
+      }
+    },
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["seconds", "tool_calls", "tokens"],
+      "properties": {
+        "seconds": {"type": "number", "minimum": 0},
+        "tool_calls": {"type": "integer", "minimum": 0},
+        "tokens": {"type": "integer", "minimum": 0},
+        "analysis_units": {"type": "number", "minimum": 0}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"operation": {"const": "backtrack"}}},
+      "then": {"properties": {"target": {"properties": {"kind": {"const": "checkpoint"}}}}}
+    },
+    {
+      "if": {"properties": {"operation": {"const": "terminate"}}},
+      "then": {
+        "properties": {
+          "target": {"properties": {"kind": {"const": "episode"}}},
+          "tool_class": {"const": "control_only"}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"operation": {"enum": ["open_or_switch_branch"]}}},
+      "then": {"properties": {"target": {"properties": {"kind": {"const": "branch"}}}}}
+    }
+  ]
+}

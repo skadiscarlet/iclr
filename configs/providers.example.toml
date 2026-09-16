@@ -1,0 +1,34 @@
+# Copy to ~/.config/egsi/providers.toml (or local config) and chmod/install 0600 before use.
+# Replace placeholder keys with real secrets supplied externally.
+active_provider = "openai"
+
+[providers.openai]
+kind = "openai_compatible"
+base_url = "https://api.openai.com/v1"
+api_key = "replace-me"
+model = "gpt-5.6-sol"
+timeout_seconds = 180
+max_retries = 3
+
+[providers.anthropic]
+kind = "anthropic"
+base_url = "https://api.anthropic.com"
+api_key = "replace-me"
+model = "claude-opus-5"
+timeout_seconds = 180
+max_retries = 3
+
+# Local Codex CLI adapter. Authentication remains in CODEX_HOME/auth.json;
+# this registry intentionally contains no API key for codex_exec.
+[providers.codex-sol]
+kind = "codex_exec"
+model = "gpt-5.6-sol"
+codex_home = "/home/you/.codex"
+model_provider = "openai-http"
+executable = "/opt/egsi/bin/codex"
+# Replace this parseable all-zero sentinel with the executable's real SHA-256.
+executable_sha256 = "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+expected_cli_version = "0.150.1"
+timeout_seconds = 600
+max_retries = 3
+inherit_proxy_env = true

@@ -1,0 +1,227 @@
+schema_version: "1.0"
+project: EGSI
+task: budgeted_next_security_investigation_action
+
+formalization:
+  environment: approximate_belief_state_semi_mdp
+  action_factorization: [hypothesis, obligation, primitive, entity, tool, control]
+  max_candidate_actions: 64
+  bounded_history_steps: 8
+  discount: 0.99
+  duration_aware_discount: true
+
+data:
+  sources:
+    - vulnerable_fix_commit_pairs
+    - repository_level_trace_benchmarks
+    - reproducible_security_harnesses
+    - verified_human_audit_trajectories
+    - static_analysis_oracle_paths
+    - secure_sibling_and_patched_hard_negatives
+    - mutation_injected_vulnerabilities
+  split_rules:
+    repository_disjoint: true
+    project_family_disjoint: true
+    time_disjoint: true
+    vulnerability_family_held_out: true
+    tool_capability_shift: true
+    patch_parent_child_same_split: true
+    fork_mirror_backport_dedup: true
+    ast_clone_dedup: true
+    shared_dependency_dedup: true
+  hidden_at_inference: [patch_diff, advisory_label, gold_trace, gold_obligation]
+
+trajectory:
+  required_fields:
+    - episode_id
+    - state_version
+    - state
+    - candidate_actions
+    - legal_mask
+    - selected_action
+    - observation
+    - evidence_delta
+    - verifier_decision
+    - reward_vector
+    - next_state_version
+    - done
+  replay_snapshot_pinned: true
+  tool_versions_pinned: true
+
+reward:
+  terminal:
+    independent_confirmed: 12.0
+    correct_rejected: 8.0
+    false_confirmation_on_patched_negative: -15.0
+    false_rejection_of_gold_vulnerability: -12.0
+    correct_abstain_min: -0.5
+    correct_abstain_max: 0.0
+  process:
+    verified_critical_obligation: 1.5
+    resolved_critical_unknown: 1.0
+    useful_counter_evidence: 1.0
+    resolved_contradiction: 0.8
+    provenance_frontier_coverage: 0.3
+    exact_duplicate: -0.7
+    invalid_action: -1.0
+    unsupported_evidence_edge: -1.5
+  never_reward:
+    - self_reported_confidence_increase
+    - longer_reasoning_text
+    - raw_code_read_count
+    - unverified_checklist_completion
+    - empty_tool_result_as_global_absence
+  cost_normalization:
+    tokens: 0.00001
+    tool_calls: 0.05
+    wall_seconds: 0.001
+    analysis_units: 0.02
+  constraints:
+    max_false_confirmation_rate: 0.05
+    max_invalid_action_rate: 0.01
+    max_budget_violation_rate: 0.0
+
+branch_replay:
+  enabled: true
+  candidates_per_state: [3, 8]
+  continuation_steps: 3
+  equal_continuation_for_all_candidates: true
+  labels:
+    - verified_proof_delta
+    - critical_unknown_delta
+    - k_step_return
+    - normalized_cost
+    - terminal_outcome_if_reached
+
+stages:
+  - id: stage_0_contracts
+    objective: implement_and_test_typed_environment
+    trainable_components: []
+    exit_gates:
+      schema_parse_rate: 1.0
+      hard_invariant_pass_rate: 0.99
+      receipt_replay_rate: 0.98
+  - id: stage_1_sft_bc
+    objective: learn_roles_state_normalization_and_action_factorization
+    losses:
+      - role_tag_cross_entropy
+      - goal_cross_entropy
+      - primitive_cross_entropy
+      - entity_pointer_loss
+      - tool_router_cross_entropy
+      - stop_outcome_cross_entropy
+      - fact_claim_boundary_loss
+    data_filter: verifier_accepted_teacher_transitions_only
+  - id: stage_2_value_reward
+    objective: pretrain_process_and_value_heads
+    losses:
+      - listwise_action_ranking
+      - quantile_q_regression
+      - success_binary_cross_entropy
+      - information_gain_regression
+      - cost_regression
+      - redundancy_binary_cross_entropy
+      - terminal_calibration_brier
+  - id: stage_3_offline_rl
+    objective: conservative_offline_policy_learning
+    algorithms: [behavior_cloning_warm_start, IQL, CQL_regularization]
+    prioritized_replay_by: [td_error, state_novelty, rare_vulnerability_family]
+  - id: stage_4_dagger
+    objective: mine_and_correct_policy_failures
+    failure_buckets:
+      - premature_stop
+      - wrong_branch_budget_capture
+      - duplicate_search
+      - false_conclusion_after_tool_failure
+      - patched_negative_false_confirmation
+      - cross_repository_entity_mapping_error
+  - id: stage_5_online_rl
+    objective: asynchronous_constrained_multi_turn_improvement
+    algorithms: [constrained_PPO, GRPO_variant]
+    start_gate: verified_potential_pilot_improves_independent_outcome
+    randomization:
+      - budget
+      - tool_latency
+      - tool_dropout
+      - query_incompleteness
+      - build_failure
+    replay_write_gate: verifier_accepted_transition
+  - id: stage_6_curriculum
+    objective: cross_repository_and_tool_shift_generalization
+  - id: stage_7_distillation
+    objective: deploy_small_action_ranker_and_continual_learning
+
+curriculum:
+  L0: {files: 1, unknowns: 1, hypotheses: 1, tool_failure_rate: 0.0}
+  L1: {interprocedural: true, max_call_depth: 3, hypotheses: 1}
+  L2: {security_semantics: [authorization, guard, secure_sibling]}
+  L3: {features: [alias, field_flow, dynamic_dispatch]}
+  L4: {multi_hypothesis: true, branch_backtrack_stop: true}
+  L5: {build_failure: true, tool_dropout: true, budget_randomization: true}
+  L6: {unseen_repository: true, unseen_vulnerability_family: true, unseen_tool_mix: true}
+
+model_profiles:
+  laptop_8gb:
+    semantic_model: frozen_external_or_quantized
+    selector: 100M_to_500M_structured_transformer_or_0.5B_to_3B_QLoRA
+    graph_embeddings: precomputed
+    online_rl: disabled_until_pilot
+  research_full:
+    gpu: 4_to_8_x_24GB
+    verified_trajectories: [20000, 50000]
+    branch_replay_states: [2000, 5000]
+    selector: 3B_to_7B_LoRA_or_structured_actor_critic
+    asynchronous_tool_rollouts: true
+
+evaluation:
+  tasks:
+    - action_legality
+    - next_action_ranking
+    - evidence_construction
+    - end_to_end_budgeted_audit
+  primary_metrics:
+    - independent_verified_finding_rate_at_budget
+    - confirmed_precision_recall_f1
+    - patched_negative_false_confirmation_rate
+    - cost_per_confirmed_finding
+    - unseen_repository_generalization_gap
+    - certificate_replay_pass_rate
+  process_metrics:
+    - candidate_oracle_recall
+    - valid_action_rate
+    - mask_false_exclusion_rate
+    - top1_topk_ndcg
+    - q_calibration_brier_ece
+    - critical_unknown_closure_auc
+    - unsupported_evidence_edge_rate
+    - duplicate_loop_rate
+    - premature_stop_rate
+    - branch_regret
+    - backtrack_recovery_rate
+  statistical_unit: repository
+  confidence_interval: repository_cluster_bootstrap
+
+baselines:
+  - static_security_tool
+  - free_form_ReAct
+  - DSL_with_posthoc_validator
+  - masked_random
+  - proof_obligation_greedy
+  - greedy_information_gain
+  - cost_risk_pareto_heuristic
+  - matched_capacity_flat_BC
+  - matched_capacity_flat_RL
+  - hierarchy_without_role_normalization
+  - oracle_candidate_role_stop
+
+pilot_gates:
+  typed_automaton:
+    valid_action_rate_min: 0.95
+    invalid_redundant_call_reduction_min: 0.25
+    verified_rate_max_allowed_drop_pp: 2.0
+  verified_credit:
+    verified_finding_rate_at_20_relative_gain_min: 0.15
+    patched_negative_false_confirmation_must_not_increase: true
+  cross_repository_hierarchy:
+    verified_rate_gain_pp_min: 10.0
+    alternative_cost_reduction_min: 0.20

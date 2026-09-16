@@ -1,0 +1,36 @@
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.venv/
+venv/
+/env/
+.work/
+build/
+dist/
+*.egg-info/
+.codex/
+.agents/
+
+# Local provider registry (machine paths; never commit secrets).
+configs/providers.local.toml
+
+# Third-party vulnerability corpus on a local volume; not for source control.
+# Root-only: do not ignore src/egsi/data/.
+/data
+
+# Machine-local lock/attestation inventories (absolute paths, inodes, venv trees).
+configs/offline-test-runner.lock.json
+configs/native-signer-build-record.json
+
+# Compiled locked launchers: machine-local ELFs with injected ephemeral signer keys.
+scripts/rerun_first_case_hard_gate
+scripts/run_fail_fast_enrich
+scripts/run_test_receipt
+scripts/verify_fail_fast_enrich
+scripts/verify_first_case_hard_gate
+
+data/derived/cache/teacher/

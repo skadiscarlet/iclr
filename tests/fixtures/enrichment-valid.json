@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0",
+  "case_id": "ghsa-2m8h-fgr8-2q9w",
+  "generation_mode": "fixture",
+  "provider": "fixture",
+  "model": "fixture-v1",
+  "requested_model": "fixture-v1",
+  "provider_response_model": "fixture-v1",
+  "teacher_response_commitment_sha256": "sha256:c7d04aa957afdfa7a3d0ec491545f6b1955705c8c7a9b432d78ee2cca5878a11",
+  "provider_request_id": "fixture-1",
+  "prompt_sha256": "sha256:0f68da64f57a06ef97ed0c515b2103d662e3ad2e0e66473a2c4b93f4109ee9ac",
+  "source_context_sha256": "sha256:75b2cdff8bd86b696aa4b69f7f245f8966fa67e65851d084c2ab71e633e5eba2",
+  "temperature": 0.0,
+  "max_tokens": 8192,
+  "latency_ms": 0,
+  "usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "total_tokens": 0
+  },
+  "structured_output_valid": true,
+  "payload": {
+    "family": "source_to_sink",
+    "hypothesis": "Inspect the patch-grounded security path without asserting dynamic confirmation.",
+    "locations": [
+      {
+        "path": "spring-webmvc/src/main/java/org/springframework/web/servlet/ResourceServlet.java",
+        "symbol": "request",
+        "start_line": 230,
+        "end_line": 230,
+        "role": "guard"
+      }
+    ],
+    "obligations": [
+      {
+        "obligation_id": "O-1",
+        "kind": "security_invariant",
+        "description": "Establish the missing or incomplete security relation.",
+        "status": "unknown"
+      }
+    ],
+    "trace": [
+      {
+        "step_id": "S-1",
+        "goal": "CHECK_GUARD_OR_SANITIZER",
+        "operation": "find_guard",
+        "target_kind": "path",
+        "target_id": "spring-webmvc/src/main/java/org/springframework/web/servlet/ResourceServlet.java",
+        "expected_evidence_type": "source_location",
+        "tool_class": "repository_index",
+        "target_location": "spring-webmvc/src/main/java/org/springframework/web/servlet/ResourceServlet.java",
+        "resolves_unknowns": [
+          "O-1"
+        ],
+        "reason_tags": [
+          "fixture",
+          "patch_grounded"
+        ]
+      }
+    ],
+    "authorization": null,
+    "limitations": [
+      "Fixture output is for offline contract tests only; runtime impact remains unknown."
+    ]
+  },
+  "validation": {
+    "valid": true,
+    "family_mismatch": false,
+    "invalid_locations": [],
+    "invalid_trace_locations": [],
+    "invalid_goals": [],
+    "invalid_operations": [],
+    "invalid_target_kinds": [],
+    "invalid_tool_classes": []
+  },
+  "record_commitment_sha256": "sha256:e4deff150c53f15d56c58f685641b0f0c7ad285d0992fa717ae44d37f7e4810f"
+}
