@@ -90,6 +90,7 @@ OpenReview/ORCID/service-contributor eligibility (`needs_human_confirmation`). C
 - Base: `18458b2cceaeef3cd18c8b455b1f0724d50d94c9` (`main`)
 - Implementation SHA (A'): `dcf80581b7d887a761d9acf484f6fef13a516d8c`
 - Branch: `research/naacl2027-r01`
-- Report commit B and receipt C recorded after this file is committed.
+- Report commit B: `4a0ffd3adbf84ab1f629466e51f517452b694f71` (remote SHA match yes)
+- Receipt commit C: created after verifying B; C's own SHA is reported in the handoff, not inside this file.
 
 R01 stops here. R02 is not authorized by this round.

@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0",
+  "round_id": "R01",
+  "branch": "research/naacl2027-r01",
+  "normalized_origin": "skadiscarlet/iclr",
+  "origin_url_redacted": "ssh://ssh.github.com:443/skadiscarlet/iclr.git",
+  "implementation_sha": "dcf80581b7d887a761d9acf484f6fef13a516d8c",
+  "verified_checkpoint_sha": "4a0ffd3adbf84ab1f629466e51f517452b694f71",
+  "local_sha_at_checkpoint_verify": "4a0ffd3adbf84ab1f629466e51f517452b694f71",
+  "remote_sha_at_checkpoint_verify": "4a0ffd3adbf84ab1f629466e51f517452b694f71",
+  "remote_sha_match": "yes",
+  "push_exit_code": 0,
+  "force_push": false,
+  "verified_at": "2026-09-16T15:24:00Z",
+  "assistant_repo_access": "unverified_404",
+  "notes": "Observed remote SHA of checkpoint B on origin refs/heads/research/naacl2027-r01. This receipt is committed as C afterwards; C's own SHA is not written into this file."
+}
