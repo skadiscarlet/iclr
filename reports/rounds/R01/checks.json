@@ -1,0 +1,150 @@
+{
+  "schema_version": "1.0",
+  "round_id": "R01",
+  "checks": [
+    {
+      "check_id": "pytest1",
+      "command": "python3 -m pytest tests/sbs -q --tb=short",
+      "started_at": "2026-09-16T15:19:38Z",
+      "finished_at": "2026-09-16T15:19:50Z",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_artifact": "reports/rounds/R01/check-logs/pytest-1.log",
+      "stderr_artifact": "reports/rounds/R01/check-logs/pytest-1.log",
+      "artifact_sha256": "sha256:b1ed6200b08573d0c689c347450b497f57c482b43058acd6399a1a2a893a3b58",
+      "notes": "R01 pytest run 1; 28 passed"
+    },
+    {
+      "check_id": "pytest2",
+      "command": "python3 -m pytest tests/sbs -q --tb=short",
+      "started_at": "2026-09-16T15:19:50Z",
+      "finished_at": "2026-09-16T15:20:01Z",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_artifact": "reports/rounds/R01/check-logs/pytest-2.log",
+      "stderr_artifact": "reports/rounds/R01/check-logs/pytest-2.log",
+      "artifact_sha256": "sha256:f2d5f85a4b0826a30983b3add6389733f9ce0187a18c8579d7fd4500df8d6f0a",
+      "notes": "R01 pytest run 2; 28 passed; same assertion outcomes as run 1"
+    },
+    {
+      "check_id": "doctor1",
+      "command": "python3 -m sbs doctor --output reports/rounds/R01/inventory.json",
+      "started_at": "2026-09-16T15:20:01Z",
+      "finished_at": "2026-09-16T15:20:12Z",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_artifact": "reports/rounds/R01/check-logs/cli-1.log",
+      "stderr_artifact": "reports/rounds/R01/check-logs/cli-1.log",
+      "artifact_sha256": "sha256:4d30c4a1fbf8bba954961582d8814b5832e5bc90624606cdf9c3034f84ffd37a",
+      "notes": "CLI run 1 doctor"
+    },
+    {
+      "check_id": "registry1",
+      "command": "python3 -m sbs validate-registry --input metadata/r01_candidates.jsonl",
+      "started_at": "2026-09-16T15:20:12Z",
+      "finished_at": "2026-09-16T15:20:12Z",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_artifact": "reports/rounds/R01/check-logs/cli-1.log",
+      "stderr_artifact": "reports/rounds/R01/check-logs/cli-1.log",
+      "artifact_sha256": "sha256:4d30c4a1fbf8bba954961582d8814b5832e5bc90624606cdf9c3034f84ffd37a",
+      "notes": "CLI run 1 validate-registry; 24 candidates, 0 human_verified"
+    },
+    {
+      "check_id": "replay1",
+      "command": "python3 -m sbs replay --config configs/r01_smoke.json --out artifacts/r01_smoke",
+      "started_at": "2026-09-16T15:20:12Z",
+      "finished_at": "2026-09-16T15:20:12Z",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_artifact": "reports/rounds/R01/check-logs/cli-1.log",
+      "stderr_artifact": "reports/rounds/R01/check-logs/cli-1.log",
+      "artifact_sha256": "sha256:4d30c4a1fbf8bba954961582d8814b5832e5bc90624606cdf9c3034f84ffd37a",
+      "notes": "CLI run 1 replay; model_calls=0; terminals FINISH/UNRESOLVED only"
+    },
+    {
+      "check_id": "doctor2",
+      "command": "python3 -m sbs doctor --output reports/rounds/R01/inventory.json",
+      "started_at": "2026-09-16T15:20:12Z",
+      "finished_at": "2026-09-16T15:20:24Z",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_artifact": "reports/rounds/R01/check-logs/cli-2.log",
+      "stderr_artifact": "reports/rounds/R01/check-logs/cli-2.log",
+      "artifact_sha256": "sha256:4d30c4a1fbf8bba954961582d8814b5832e5bc90624606cdf9c3034f84ffd37a",
+      "notes": "CLI run 2 doctor"
+    },
+    {
+      "check_id": "registry2",
+      "command": "python3 -m sbs validate-registry --input metadata/r01_candidates.jsonl",
+      "started_at": "2026-09-16T15:20:24Z",
+      "finished_at": "2026-09-16T15:20:24Z",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_artifact": "reports/rounds/R01/check-logs/cli-2.log",
+      "stderr_artifact": "reports/rounds/R01/check-logs/cli-2.log",
+      "artifact_sha256": "sha256:4d30c4a1fbf8bba954961582d8814b5832e5bc90624606cdf9c3034f84ffd37a",
+      "notes": "CLI run 2 validate-registry"
+    },
+    {
+      "check_id": "replay2",
+      "command": "python3 -m sbs replay --config configs/r01_smoke.json --out artifacts/r01_smoke",
+      "started_at": "2026-09-16T15:20:24Z",
+      "finished_at": "2026-09-16T15:20:24Z",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_artifact": "reports/rounds/R01/check-logs/cli-2.log",
+      "stderr_artifact": "reports/rounds/R01/check-logs/cli-2.log",
+      "artifact_sha256": "sha256:4d30c4a1fbf8bba954961582d8814b5832e5bc90624606cdf9c3034f84ffd37a",
+      "notes": "CLI run 2 replay; semantically identical to run 1 except timestamps"
+    },
+    {
+      "check_id": "kept_egsi",
+      "command": "python3 -m pytest tests/test_package.py tests/contracts/test_case.py -q --tb=line",
+      "started_at": "2026-09-16T15:20:24Z",
+      "finished_at": "2026-09-16T15:20:25Z",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_artifact": "reports/rounds/R01/check-logs/kept-egsi.log",
+      "stderr_artifact": "reports/rounds/R01/check-logs/kept-egsi.log",
+      "artifact_sha256": "sha256:661cc27a2db83afc41ffb9cb1dfa7f808a3742eaaa8ed5e185534ce62c7aa5eb",
+      "notes": "Pre-existing egsi tests kept; 13 passed; none deleted"
+    },
+    {
+      "check_id": "collect",
+      "command": "python3 -m pytest --collect-only -q",
+      "started_at": "2026-09-16T15:20:25Z",
+      "finished_at": "2026-09-16T15:20:26Z",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_artifact": "reports/rounds/R01/check-logs/collect.log",
+      "stderr_artifact": "reports/rounds/R01/check-logs/collect.log",
+      "artifact_sha256": "sha256:414b4df62d87dc96a51b34ea8a3b45f9ac1032d2c580ec14f9ec5b3f493eaa1e",
+      "notes": "1377 tests collected (1349 pre-existing + 28 R01). No pre-existing tests deleted."
+    },
+    {
+      "check_id": "validate_reports_1",
+      "command": "python3 -m sbs validate-reports --round R01 --phase pre-push",
+      "started_at": "2026-09-16T15:22:34Z",
+      "finished_at": "2026-09-16T15:22:34Z",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_artifact": "reports/rounds/R01/check-logs/validate-reports-1.log",
+      "stderr_artifact": "reports/rounds/R01/check-logs/validate-reports-1.log",
+      "artifact_sha256": "sha256:6faef7f986e65d3740b3060a99a700380e008d3a631c96f757cb82f61f48f29c",
+      "notes": "pre-push report validation run 1"
+    },
+    {
+      "check_id": "validate_reports_2",
+      "command": "python3 -m sbs validate-reports --round R01 --phase pre-push",
+      "started_at": "2026-09-16T15:22:34Z",
+      "finished_at": "2026-09-16T15:22:34Z",
+      "exit_code": 0,
+      "status": "pass",
+      "stdout_artifact": "reports/rounds/R01/check-logs/validate-reports-2.log",
+      "stderr_artifact": "reports/rounds/R01/check-logs/validate-reports-2.log",
+      "artifact_sha256": "sha256:6faef7f986e65d3740b3060a99a700380e008d3a631c96f757cb82f61f48f29c",
+      "notes": "pre-push report validation run 2"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "case_id": "fixture-counter",
+  "visible_context": "Synthetic revision: an owner guard is present in a second snippet.",
+  "allowed_evidence_ids": [
+    "ev-unchecked",
+    "ev-checked"
+  ],
+  "split": "dev_pilot",
+  "material_kind": "fixture",
+  "project_family": "synthetic-fixture"
+}

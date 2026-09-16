@@ -1,0 +1,6 @@
+===== python -m sbs doctor =====
+{"assistant_repo_access": "unverified_404", "head": "dcf80581b7d887a761d9acf484f6fef13a516d8c", "normalized_origin": "skadiscarlet/iclr", "ok": true, "output": "reports/rounds/R01/inventory.json"}
+===== python -m sbs validate-registry =====
+{"candidate_pairs":24,"human_verified_pairs":0,"null_source_locator_rows":0,"project_families":24,"split":"dev_pilot","valid":true}
+===== python -m sbs replay =====
+{"cases": ["budget", "counter", "insufficient", "support"], "detection_metrics_status": "not_evaluated", "exit_status": "ok", "model_calls": 0, "ok": true}

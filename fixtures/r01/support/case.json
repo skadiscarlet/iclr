@@ -1,0 +1,11 @@
+{
+  "case_id": "fixture-support",
+  "visible_context": "Synthetic owner-check relation on AccountStore.load.",
+  "allowed_evidence_ids": [
+    "ev-record",
+    "ev-load"
+  ],
+  "split": "dev_pilot",
+  "material_kind": "fixture",
+  "project_family": "synthetic-fixture"
+}

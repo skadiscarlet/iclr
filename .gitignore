@@ -34,3 +34,9 @@ scripts/verify_fail_fast_enrich
 scripts/verify_first_case_hard_gate
 
 data/derived/cache/teacher/
+
+# R01 local third-party material and evaluator data (never actor-mounted).
+local_data/
+
+# R01 full replay artifacts (redacted manifests live under reports/).
+artifacts/

@@ -1,0 +1,86 @@
+{
+  "observation_order": [
+    "ev-step-1",
+    "ev-step-2",
+    "ev-step-3",
+    "ev-step-4",
+    "ev-step-5"
+  ],
+  "initial_hypothesis": {
+    "hypothesis_id": "h1",
+    "entities": [
+      "StepN"
+    ],
+    "security_relation": "all steps must share the same owner token",
+    "relation_source": "fixture_script",
+    "support_refs": [],
+    "counter_refs": [],
+    "unknowns": [
+      "owner token never observed"
+    ],
+    "status": "open"
+  },
+  "updates": {
+    "ev-step-1": {
+      "hypothesis_id": "h1",
+      "add_support": [
+        "ev-step-1"
+      ],
+      "add_counter": [],
+      "add_unknowns": [],
+      "remove_unknowns": [],
+      "status": "open",
+      "terminal": null,
+      "termination_reason": null
+    },
+    "ev-step-2": {
+      "hypothesis_id": "h1",
+      "add_support": [
+        "ev-step-2"
+      ],
+      "add_counter": [],
+      "add_unknowns": [],
+      "remove_unknowns": [],
+      "status": "open",
+      "terminal": null,
+      "termination_reason": null
+    },
+    "ev-step-3": {
+      "hypothesis_id": "h1",
+      "add_support": [
+        "ev-step-3"
+      ],
+      "add_counter": [],
+      "add_unknowns": [],
+      "remove_unknowns": [],
+      "status": "open",
+      "terminal": null,
+      "termination_reason": null
+    },
+    "ev-step-4": {
+      "hypothesis_id": "h1",
+      "add_support": [
+        "ev-step-4"
+      ],
+      "add_counter": [],
+      "add_unknowns": [],
+      "remove_unknowns": [],
+      "status": "open",
+      "terminal": null,
+      "termination_reason": null
+    },
+    "ev-step-5": {
+      "hypothesis_id": "h1",
+      "add_support": [
+        "ev-step-5"
+      ],
+      "add_counter": [],
+      "add_unknowns": [],
+      "remove_unknowns": [],
+      "status": "open",
+      "terminal": null,
+      "termination_reason": null
+    }
+  },
+  "script_kind": "fixture_script"
+}

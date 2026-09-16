@@ -1,0 +1,50 @@
+{
+  "observation_order": [
+    "ev-unchecked",
+    "ev-checked"
+  ],
+  "initial_hypothesis": {
+    "hypothesis_id": "h1",
+    "entities": [
+      "AccountStore",
+      "caller"
+    ],
+    "security_relation": "caller must own the account to load it",
+    "relation_source": "fixture_script",
+    "support_refs": [],
+    "counter_refs": [],
+    "unknowns": [
+      "whether a later guard exists"
+    ],
+    "status": "open"
+  },
+  "updates": {
+    "ev-unchecked": {
+      "hypothesis_id": "h1",
+      "add_support": [
+        "ev-unchecked"
+      ],
+      "add_counter": [],
+      "add_unknowns": [],
+      "remove_unknowns": [],
+      "status": "supported",
+      "terminal": null,
+      "termination_reason": null
+    },
+    "ev-checked": {
+      "hypothesis_id": "h1",
+      "add_support": [],
+      "add_counter": [
+        "ev-checked"
+      ],
+      "add_unknowns": [],
+      "remove_unknowns": [
+        "whether a later guard exists"
+      ],
+      "status": "refuted",
+      "terminal": "FINISH",
+      "termination_reason": "counter_evidence"
+    }
+  },
+  "script_kind": "fixture_script"
+}

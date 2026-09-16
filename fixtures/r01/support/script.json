@@ -1,0 +1,50 @@
+{
+  "observation_order": [
+    "ev-record",
+    "ev-load"
+  ],
+  "initial_hypothesis": {
+    "hypothesis_id": "h1",
+    "entities": [
+      "AccountRecord",
+      "caller"
+    ],
+    "security_relation": "caller must own the account to load it",
+    "relation_source": "fixture_script",
+    "support_refs": [],
+    "counter_refs": [],
+    "unknowns": [
+      "whether load() checks ownerId"
+    ],
+    "status": "open"
+  },
+  "updates": {
+    "ev-record": {
+      "hypothesis_id": "h1",
+      "add_support": [
+        "ev-record"
+      ],
+      "add_counter": [],
+      "add_unknowns": [],
+      "remove_unknowns": [],
+      "status": "open",
+      "terminal": null,
+      "termination_reason": null
+    },
+    "ev-load": {
+      "hypothesis_id": "h1",
+      "add_support": [
+        "ev-load"
+      ],
+      "add_counter": [],
+      "add_unknowns": [],
+      "remove_unknowns": [
+        "whether load() checks ownerId"
+      ],
+      "status": "supported",
+      "terminal": "FINISH",
+      "termination_reason": "support_sufficient"
+    }
+  },
+  "script_kind": "fixture_script"
+}

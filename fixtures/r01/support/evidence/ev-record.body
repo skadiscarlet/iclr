@@ -1,0 +1,8 @@
+class AccountRecord {
+  final String ownerId;
+  final String accountId;
+  AccountRecord(String ownerId, String accountId) {
+    this.ownerId = ownerId;
+    this.accountId = accountId;
+  }
+}

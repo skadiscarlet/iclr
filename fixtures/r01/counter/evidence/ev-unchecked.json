@@ -1,0 +1,14 @@
+{
+  "evidence_id": "ev-unchecked",
+  "display_path": "src/AccountStore.java",
+  "span": {
+    "start_line": 1,
+    "end_line": 6
+  },
+  "content_sha256": "sha256:9547b80d59930b4003b5451ab4e47e54309a4b69ae4347313284328b209a243b",
+  "source_category": "source_snippet",
+  "material_kind": "fixture",
+  "generation_id": null,
+  "source_revision": null,
+  "relative_read_path": "evidence/ev-unchecked.body"
+}

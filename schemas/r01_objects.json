@@ -1,0 +1,714 @@
+{
+  "CaseView": {
+    "additionalProperties": false,
+    "properties": {
+      "case_id": {
+        "title": "Case Id",
+        "type": "string"
+      },
+      "visible_context": {
+        "title": "Visible Context",
+        "type": "string"
+      },
+      "allowed_evidence_ids": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Allowed Evidence Ids",
+        "type": "array"
+      },
+      "split": {
+        "const": "dev_pilot",
+        "title": "Split",
+        "type": "string"
+      },
+      "material_kind": {
+        "enum": [
+          "fixture",
+          "real"
+        ],
+        "title": "Material Kind",
+        "type": "string"
+      },
+      "project_family": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Project Family"
+      }
+    },
+    "required": [
+      "case_id",
+      "visible_context",
+      "allowed_evidence_ids",
+      "split",
+      "material_kind"
+    ],
+    "title": "CaseView",
+    "type": "object"
+  },
+  "EvidenceRecord": {
+    "$defs": {
+      "LineSpan": {
+        "additionalProperties": false,
+        "properties": {
+          "start_line": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Start Line"
+          },
+          "end_line": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "End Line"
+          }
+        },
+        "title": "LineSpan",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "evidence_id": {
+        "title": "Evidence Id",
+        "type": "string"
+      },
+      "display_path": {
+        "title": "Display Path",
+        "type": "string"
+      },
+      "span": {
+        "$ref": "#/$defs/LineSpan"
+      },
+      "content_sha256": {
+        "title": "Content Sha256",
+        "type": "string"
+      },
+      "source_category": {
+        "enum": [
+          "source_snippet",
+          "structured_record",
+          "document_excerpt"
+        ],
+        "title": "Source Category",
+        "type": "string"
+      },
+      "material_kind": {
+        "enum": [
+          "fixture",
+          "real"
+        ],
+        "title": "Material Kind",
+        "type": "string"
+      },
+      "generation_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Generation Id"
+      },
+      "source_revision": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Source Revision"
+      },
+      "relative_read_path": {
+        "title": "Relative Read Path",
+        "type": "string"
+      }
+    },
+    "required": [
+      "evidence_id",
+      "display_path",
+      "content_sha256",
+      "source_category",
+      "material_kind",
+      "relative_read_path"
+    ],
+    "title": "EvidenceRecord",
+    "type": "object"
+  },
+  "AuditState": {
+    "$defs": {
+      "Decision": {
+        "additionalProperties": false,
+        "properties": {
+          "verdict": {
+            "enum": [
+              "supported",
+              "refuted",
+              "unresolved"
+            ],
+            "title": "Verdict",
+            "type": "string"
+          },
+          "applies_to_hypothesis_id": {
+            "title": "Applies To Hypothesis Id",
+            "type": "string"
+          },
+          "not_a_global_safety_guarantee": {
+            "const": true,
+            "default": true,
+            "title": "Not A Global Safety Guarantee",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "verdict",
+          "applies_to_hypothesis_id"
+        ],
+        "title": "Decision",
+        "type": "object"
+      },
+      "Hypothesis": {
+        "additionalProperties": false,
+        "properties": {
+          "hypothesis_id": {
+            "title": "Hypothesis Id",
+            "type": "string"
+          },
+          "entities": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Entities",
+            "type": "array"
+          },
+          "security_relation": {
+            "title": "Security Relation",
+            "type": "string"
+          },
+          "relation_source": {
+            "title": "Relation Source",
+            "type": "string"
+          },
+          "support_refs": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Support Refs",
+            "type": "array"
+          },
+          "counter_refs": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Counter Refs",
+            "type": "array"
+          },
+          "unknowns": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Unknowns",
+            "type": "array"
+          },
+          "status": {
+            "default": "open",
+            "enum": [
+              "open",
+              "supported",
+              "refuted",
+              "unresolved"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "hypothesis_id",
+          "entities",
+          "security_relation",
+          "relation_source"
+        ],
+        "title": "Hypothesis",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "observed_evidence": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Observed Evidence",
+        "type": "array"
+      },
+      "hypotheses": {
+        "items": {
+          "$ref": "#/$defs/Hypothesis"
+        },
+        "title": "Hypotheses",
+        "type": "array"
+      },
+      "unresolved_items": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Unresolved Items",
+        "type": "array"
+      },
+      "remaining_budget": {
+        "title": "Remaining Budget",
+        "type": "integer"
+      },
+      "inspection_history": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Inspection History",
+        "type": "array"
+      },
+      "terminal": {
+        "anyOf": [
+          {
+            "enum": [
+              "FINISH",
+              "UNRESOLVED"
+            ],
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Terminal"
+      },
+      "termination_reason": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Termination Reason"
+      },
+      "decision": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Decision"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      }
+    },
+    "required": [
+      "hypotheses",
+      "remaining_budget"
+    ],
+    "title": "AuditState",
+    "type": "object"
+  },
+  "CandidatePair": {
+    "additionalProperties": false,
+    "description": "Management-side registry row. Not an actor view.",
+    "properties": {
+      "pair_id": {
+        "title": "Pair Id",
+        "type": "string"
+      },
+      "project_family": {
+        "title": "Project Family",
+        "type": "string"
+      },
+      "dataset_origin": {
+        "title": "Dataset Origin",
+        "type": "string"
+      },
+      "dataset_revision": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "title": "Dataset Revision"
+      },
+      "source_locator": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "title": "Source Locator"
+      },
+      "buggy_revision": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "title": "Buggy Revision"
+      },
+      "fixed_revision": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "title": "Fixed Revision"
+      },
+      "category_claim": {
+        "title": "Category Claim",
+        "type": "string"
+      },
+      "obligation_basis": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "title": "Obligation Basis"
+      },
+      "status": {
+        "enum": [
+          "metadata_only",
+          "source_resolved",
+          "evidence_draft",
+          "human_verified",
+          "excluded"
+        ],
+        "title": "Status",
+        "type": "string"
+      },
+      "license_note": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "title": "License Note"
+      },
+      "split": {
+        "const": "dev_pilot",
+        "title": "Split",
+        "type": "string"
+      },
+      "blocker": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Blocker"
+      },
+      "local_catalog_key": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Local Catalog Key"
+      }
+    },
+    "required": [
+      "pair_id",
+      "project_family",
+      "dataset_origin",
+      "dataset_revision",
+      "source_locator",
+      "buggy_revision",
+      "fixed_revision",
+      "category_claim",
+      "obligation_basis",
+      "status",
+      "license_note",
+      "split"
+    ],
+    "title": "CandidatePair",
+    "type": "object"
+  },
+  "SmokeConfig": {
+    "additionalProperties": false,
+    "properties": {
+      "mode": {
+        "const": "fixture_replay",
+        "title": "Mode",
+        "type": "string"
+      },
+      "seed": {
+        "title": "Seed",
+        "type": "integer"
+      },
+      "representations": {
+        "items": {
+          "enum": [
+            "history",
+            "sbs"
+          ],
+          "type": "string"
+        },
+        "title": "Representations",
+        "type": "array"
+      },
+      "evidence_order": {
+        "const": "frozen",
+        "title": "Evidence Order",
+        "type": "string"
+      },
+      "max_observations": {
+        "title": "Max Observations",
+        "type": "integer"
+      },
+      "split": {
+        "const": "dev_pilot",
+        "title": "Split",
+        "type": "string"
+      },
+      "model_calls_allowed": {
+        "const": 0,
+        "title": "Model Calls Allowed",
+        "type": "integer"
+      },
+      "compute_detection_metrics": {
+        "const": false,
+        "title": "Compute Detection Metrics",
+        "type": "boolean"
+      },
+      "fixtures_root": {
+        "default": "fixtures/r01",
+        "title": "Fixtures Root",
+        "type": "string"
+      },
+      "value_scorer_available": {
+        "const": false,
+        "default": false,
+        "title": "Value Scorer Available",
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "mode",
+      "seed",
+      "representations",
+      "evidence_order",
+      "max_observations",
+      "split",
+      "model_calls_allowed",
+      "compute_detection_metrics"
+    ],
+    "title": "SmokeConfig",
+    "type": "object"
+  },
+  "RunManifest": {
+    "additionalProperties": false,
+    "properties": {
+      "schema_version": {
+        "const": "1.0",
+        "default": "1.0",
+        "title": "Schema Version",
+        "type": "string"
+      },
+      "mode": {
+        "const": "fixture_replay",
+        "title": "Mode",
+        "type": "string"
+      },
+      "seed": {
+        "title": "Seed",
+        "type": "integer"
+      },
+      "split": {
+        "const": "dev_pilot",
+        "title": "Split",
+        "type": "string"
+      },
+      "representations": {
+        "items": {
+          "enum": [
+            "history",
+            "sbs"
+          ],
+          "type": "string"
+        },
+        "title": "Representations",
+        "type": "array"
+      },
+      "evidence_order": {
+        "const": "frozen",
+        "title": "Evidence Order",
+        "type": "string"
+      },
+      "max_observations": {
+        "title": "Max Observations",
+        "type": "integer"
+      },
+      "model_calls": {
+        "title": "Model Calls",
+        "type": "integer"
+      },
+      "model_calls_allowed": {
+        "title": "Model Calls Allowed",
+        "type": "integer"
+      },
+      "compute_detection_metrics": {
+        "title": "Compute Detection Metrics",
+        "type": "boolean"
+      },
+      "detection_metrics": {
+        "default": null,
+        "title": "Detection Metrics",
+        "type": "null"
+      },
+      "detection_metrics_status": {
+        "const": "not_evaluated",
+        "default": "not_evaluated",
+        "title": "Detection Metrics Status",
+        "type": "string"
+      },
+      "training_loss": {
+        "default": null,
+        "title": "Training Loss",
+        "type": "null"
+      },
+      "q_accuracy": {
+        "default": null,
+        "title": "Q Accuracy",
+        "type": "null"
+      },
+      "value_scorer_available": {
+        "const": false,
+        "default": false,
+        "title": "Value Scorer Available",
+        "type": "boolean"
+      },
+      "code_sha": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Code Sha"
+      },
+      "config_sha256": {
+        "title": "Config Sha256",
+        "type": "string"
+      },
+      "material_sha256": {
+        "title": "Material Sha256",
+        "type": "string"
+      },
+      "output_index": {
+        "additionalProperties": {
+          "type": "string"
+        },
+        "title": "Output Index",
+        "type": "object"
+      },
+      "exit_status": {
+        "title": "Exit Status",
+        "type": "string"
+      },
+      "started_at": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Started At"
+      },
+      "finished_at": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Finished At"
+      }
+    },
+    "required": [
+      "mode",
+      "seed",
+      "split",
+      "representations",
+      "evidence_order",
+      "max_observations",
+      "model_calls",
+      "model_calls_allowed",
+      "compute_detection_metrics",
+      "config_sha256",
+      "material_sha256",
+      "output_index",
+      "exit_status"
+    ],
+    "title": "RunManifest",
+    "type": "object"
+  }
+}

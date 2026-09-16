@@ -1,0 +1,5 @@
+class AccountStore {
+  AccountRecord load(String accountId) {
+    return lookup(accountId);
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "collected_at": "2026-09-16T15:20:24+00:00",
+  "repository": {
+    "assistant_repo_access": "unverified_404",
+    "current_branch": "research/naacl2027-r01",
+    "default_branch": "main",
+    "fetch_exit_code": 0,
+    "fetch_ok": true,
+    "head": "dcf80581b7d887a761d9acf484f6fef13a516d8c",
+    "normalized_origin": "skadiscarlet/iclr",
+    "origin_url_redacted": "ssh://ssh.github.com:443/skadiscarlet/iclr.git",
+    "remote_head": "18458b2cceaeef3cd18c8b455b1f0724d50d94c9",
+    "unpushed_commits": 2,
+    "untracked_non_secret": [
+      "R01_NAACL2027_EXECUTION_PLAN.md",
+      "reports/"
+    ],
+    "worktree_dirty": true
+  },
+  "resources": {
+    "cpu_count": 24,
+    "data_tree_present": true,
+    "disk_free_gib_approx": 323,
+    "git": "git version 2.55.0",
+    "gpu_count": 1,
+    "gpu_models": [
+      "NVIDIA GeForce RTX 3050"
+    ],
+    "gpu_present": true,
+    "java": "openjdk version \"21.0.12.1\" 2026-08-18",
+    "local_data_catalog_present": true,
+    "model_api_credentials_present": false,
+    "new_model_api_budget": 0,
+    "os": "Linux 7.2.4-arch1-2",
+    "providers_local_toml_present": true,
+    "python": "3.12.9",
+    "ram_gib_approx": 31.0
+  },
+  "round_id": "R01",
+  "schema_version": "1.0"
+}

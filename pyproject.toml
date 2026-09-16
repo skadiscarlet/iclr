@@ -23,9 +23,10 @@ dev = [
 
 [project.scripts]
 egsi = "egsi.cli:app"
+sbs = "sbs.cli:app"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/egsi"]
+packages = ["src/egsi", "src/sbs"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

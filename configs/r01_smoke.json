@@ -1,0 +1,12 @@
+{
+  "mode": "fixture_replay",
+  "seed": 17,
+  "representations": ["history", "sbs"],
+  "evidence_order": "frozen",
+  "max_observations": 4,
+  "split": "dev_pilot",
+  "model_calls_allowed": 0,
+  "compute_detection_metrics": false,
+  "fixtures_root": "fixtures/r01",
+  "value_scorer_available": false
+}

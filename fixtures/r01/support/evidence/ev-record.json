@@ -1,0 +1,14 @@
+{
+  "evidence_id": "ev-record",
+  "display_path": "src/AccountRecord.java",
+  "span": {
+    "start_line": 1,
+    "end_line": 9
+  },
+  "content_sha256": "sha256:d91cf137f8b9734835b6c1110a28cd799b6b15c2e54861da12f025023cb2d10f",
+  "source_category": "source_snippet",
+  "material_kind": "fixture",
+  "generation_id": null,
+  "source_revision": null,
+  "relative_read_path": "evidence/ev-record.body"
+}

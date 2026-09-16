@@ -1,0 +1,4 @@
+class PairHolder {
+  String left;
+  String right;
+}
