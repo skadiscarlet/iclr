@@ -117,6 +117,10 @@ def collect_inventory(repo: Path) -> dict[str, Any]:
     unpushed = _run(
         ["git", "rev-list", "--count", f"origin/{branch}..HEAD"], repo
     )
+    if unpushed.returncode != 0:
+        unpushed = _run(
+            ["git", "rev-list", "--count", f"origin/{default_branch}..HEAD"], repo
+        )
     unpushed_count = 0
     if unpushed.returncode == 0 and unpushed.stdout.strip().isdigit():
         unpushed_count = int(unpushed.stdout.strip())
