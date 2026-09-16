@@ -1,0 +1,1 @@
+{"counts":{"candidate_pairs":24,"fixture_cases":4,"fixture_not_in_registry":4,"human_verified_pairs":0,"project_families":24,"real_ready_pairs":2,"real_registry_rows":24},"phase":"pre-push","status":{"data_status":"partial","delivery_status":"not_pushed","engineering_status":"completed","review_status":"pending"},"valid":true}

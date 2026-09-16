@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "mode": "fixture_replay",
+  "seed": 17,
+  "split": "dev_pilot",
+  "representations": [
+    "history",
+    "sbs"
+  ],
+  "evidence_order": "frozen",
+  "max_observations": 4,
+  "model_calls": 0,
+  "model_calls_allowed": 0,
+  "compute_detection_metrics": false,
+  "detection_metrics": null,
+  "detection_metrics_status": "not_evaluated",
+  "training_loss": null,
+  "q_accuracy": null,
+  "value_scorer_available": false,
+  "code_sha": "dcf80581b7d887a761d9acf484f6fef13a516d8c",
+  "config_sha256": "sha256:8e08f410ccaae54b7971b69508ef06198a53ca8d33da73e5c216105f3fad1454",
+  "material_sha256": "sha256:6493329cf01d7a08aa955712dc438b23a9c60805d299dc44342b98c79127b398",
+  "output_index": {
+    "budget/history": "artifacts/r01_smoke/budget/history.json",
+    "budget/sbs": "artifacts/r01_smoke/budget/sbs.json",
+    "budget/state": "artifacts/r01_smoke/budget/state.json",
+    "counter/history": "artifacts/r01_smoke/counter/history.json",
+    "counter/sbs": "artifacts/r01_smoke/counter/sbs.json",
+    "counter/state": "artifacts/r01_smoke/counter/state.json",
+    "insufficient/history": "artifacts/r01_smoke/insufficient/history.json",
+    "insufficient/sbs": "artifacts/r01_smoke/insufficient/sbs.json",
+    "insufficient/state": "artifacts/r01_smoke/insufficient/state.json",
+    "support/history": "artifacts/r01_smoke/support/history.json",
+    "support/sbs": "artifacts/r01_smoke/support/sbs.json",
+    "support/state": "artifacts/r01_smoke/support/state.json"
+  },
+  "exit_status": "ok",
+  "started_at": "2026-09-16T15:20:24+00:00",
+  "finished_at": "2026-09-16T15:20:24+00:00"
+}

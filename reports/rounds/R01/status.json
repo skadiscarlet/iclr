@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0",
+  "round_id": "R01",
+  "engineering_status": "completed",
+  "data_status": "partial",
+  "delivery_status": "not_pushed",
+  "review_status": "pending",
+  "assistant_repo_access": "unverified_404",
+  "base_sha": "18458b2cceaeef3cd18c8b455b1f0724d50d94c9",
+  "implementation_sha": "dcf80581b7d887a761d9acf484f6fef13a516d8c",
+  "branch": "research/naacl2027-r01",
+  "counts": {
+    "candidate_pairs": 24,
+    "real_ready_pairs": 2,
+    "human_verified_pairs": 0,
+    "project_families": 24,
+    "fixture_cases": 4
+  },
+  "real_model_run_status": "not_run_by_design",
+  "training_status": "not_started_by_design",
+  "blockers": [
+    "logic_ready_pairs=0: authorization candidates only have generic family-template obligations; CWE-862/863/639 is not treated as a confirmed logic bug",
+    "assistant_repo_access=unverified_404: ChatGPT GitHub connector still not verified against this SHA",
+    "4 conventional registry rows lack a local artifact license file (license_unclear); they stay source_resolved not ready"
+  ],
+  "next_decisions": [
+    "Whether R02 should spend human time annotating citable product obligations for authorization/logic pairs, or drop the logic quota",
+    "Whether to authorize a frozen-model pilot (R01 keeps model_calls_allowed=0)",
+    "Whether to grant the ChatGPT GitHub App access to skadiscarlet/iclr so assistant_repo_access can be re-checked"
+  ]
+}

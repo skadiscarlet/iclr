@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "round_id": "R01",
+  "branch": "research/naacl2027-r01",
+  "summary_path": "reports/rounds/R01/SUMMARY.md",
+  "status_path": "reports/rounds/R01/status.json",
+  "checks_path": "reports/rounds/R01/checks.json",
+  "push_receipt_path": "reports/rounds/R01/push_receipt.json",
+  "implementation_sha": "dcf80581b7d887a761d9acf484f6fef13a516d8c",
+  "review_status": "pending"
+}
