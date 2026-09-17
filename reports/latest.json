@@ -9,7 +9,8 @@
   "data_audit_path": "reports/rounds/R02B/DATA_AUDIT.md",
   "run_index_path": "reports/rounds/R02B/run_index.json",
   "push_receipt_path": "reports/rounds/R02B/push_receipt.json",
-  "implementation_sha": "59301b66c98cdb960bc35550939d0c0fcecbefd7",
+  "implementation_sha": "5d3e468a029262cb2c25a734572b52db8242c14d",
+  "model_run_implementation_sha": "59301b66c98cdb960bc35550939d0c0fcecbefd7",
   "latest_research_run": "artifacts/r02b/runs/2026-09-17T141202+0000",
   "latest_research_run_kind": "frozen_model_pilot_unscored",
   "review_status": "pending"

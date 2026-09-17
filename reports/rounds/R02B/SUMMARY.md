@@ -5,8 +5,9 @@
 - 仓库：`skadiscarlet/iclr`
 - 分支：`research/naacl2027-r02`
 - 已复核基线（祖先）：`26e86bccfa656e59b3e234fd3fd05e4c83e357ec`
-- Implementation SHA（A）：`59301b66c98cdb960bc35550939d0c0fcecbefd7`
-- engineering=completed；data=partial；model_run=completed；human_annotation=not_checked；delivery=checkpoint_verified（B 已推送并 ls-remote 核对）；review=pending
+- Implementation SHA（当前代码，含稳定 ledger）：`5d3e468a029262cb2c25a734572b52db8242c14d`
+- 冻结模型运行所用 SHA：`59301b66c98cdb960bc35550939d0c0fcecbefd7`
+- engineering=completed；data=partial；model_run=completed；human_annotation=not_checked；delivery=not_pushed（本 B 待推送）；review=pending
 - G0=passed。训练=not_started_by_design。新 CVE 发现=none_by_design。
 
 CLI 实际命令：`python -m sbs prepare-pilot` / `validate-pilot` / `run-pilot` / `validate-reports`。
@@ -21,7 +22,7 @@ CLI 实际命令：`python -m sbs prepare-pilot` / `validate-pilot` / `run-pilot
 | B03 | completed | 8 version-bound instance / 4 complete pairs；旧 R01 包未覆写；logic 2 对仍 generic |
 | B04 | completed | 锁定 `Qwen/Qwen2.5-Coder-1.5B-Instruct` revision `2e1fd397ee46e1388853d2af2c993145b0f1098a`，cpu/fp32，`trust_remote_code=false` |
 | B05 | completed | 第一批 1 对 ×2×2×1×4=16 加上 E0 2，共 18 真实请求；第二次 CLI 运行同样 18 条非空响应 |
-| B06 | running | 本文件与 checks/run_index/ANALYSIS；随后 A 已存在，B 报告提交并推送 |
+| B06 | completed | 报告 + 稳定 request ledger（`open_request_ledger`）；G12 二次打开续计 seq |
 
 最终 prompt 正文对齐：见 `run_manifest.fairness_hashes` 与 ANALYSIS。
 
@@ -49,4 +50,4 @@ CLI 实际命令：`python -m sbs prepare-pilot` / `validate-pilot` / `run-pilot
 
 ## Git交接
 
-A=`59301b66c98cdb960bc35550939d0c0fcecbefd7`。B=`f61a23419b796d5577a5b2cbcf1ac7c965d6505c`（已推送，当时远程 SHA 匹配）。C 回执提交 `09c75fcf75fb8e487f1c6c40dfe8d3a9a415e710` 不自引用自身 SHA；随后修正 post-push 校验误把缺失字段当自哈希。最终远程 SHA 见交接。R01/R02A 历史未覆写。
+冻结运行 A=`59301b66c98cdb960bc35550939d0c0fcecbefd7`。稳定 ledger 实现=`5d3e468a029262cb2c25a734572b52db8242c14d`（`git ls-remote` 在本 B 之前已观察到该远程 SHA）。本 B 推送后填写新的 B SHA；C 回执只记录已观察到的远程 SHA，不自哈希。R01/R02A 历史未覆写。

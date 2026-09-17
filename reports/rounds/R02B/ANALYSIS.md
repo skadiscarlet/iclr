@@ -11,7 +11,7 @@
    - 完整矩阵 128 主请求未跑。logic drafts 的义务仍 generic，不进入语义合格集。
 
 2. **G0 是否都通过？真实 prompt 的公共证据对齐记录在哪里？**
-   - G01–G12 pytest 57 passed（含 R01 `model_calls_allowed=0` fixture replay）。
+   - G01–G12 pytest 通过（含 R01 `model_calls_allowed=0` fixture replay）。G12 现驱动 `open_request_ledger` 与两次 `run_pilot`：workspace 稳定 ledger 在二次 CLI 启动后仍看到已消费计数，192 上限不随时间戳 run 目录重置。
    - 运行时每步 `render_fair_prompts` 后比较；`run_manifest.fairness_hashes` 与各 episode `fairness` 字段记录公共 evidence block sha256。同一 instance 的 history/sbs 在 form/read_0/read_1/final 上哈希一致。form 步无已读证据，clip_bounds 为 `[0,0]`。
 
 3. **模型主要失败是输出格式、证据引用、假设质量、规格不足还是上下文不足？**

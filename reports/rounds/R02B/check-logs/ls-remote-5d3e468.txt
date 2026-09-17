@@ -1,0 +1,4 @@
+verified_at=2026-09-17T15:07:08Z
+command=git ls-remote origin refs/heads/research/naacl2027-r02
+5d3e468a029262cb2c25a734572b52db8242c14d	refs/heads/research/naacl2027-r02
+local_head=5d3e468a029262cb2c25a734572b52db8242c14d

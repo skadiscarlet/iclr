@@ -87,6 +87,28 @@
       "status": "pass",
       "log_relative": "reports/rounds/R02B/check-logs/validate-reports-pre-push.log",
       "log_sha256": "sha256:5881358186e140bb24b74c9951c3b0e7f526266fb2ac406d2327ad3cf0c8828a"
+    },
+    {
+      "check_id": "B06-ls-remote-5d3e468",
+      "command": "git ls-remote origin refs/heads/research/naacl2027-r02",
+      "started_at": "2026-09-17T15:07:08+00:00",
+      "finished_at": "2026-09-17T15:07:08+00:00",
+      "exit_code": 0,
+      "status": "pass",
+      "log_relative": "reports/rounds/R02B/check-logs/ls-remote-5d3e468.txt",
+      "log_sha256": "sha256:acf026b1fde18afebc670c334297d541c9f90388ceb50c41a6efa365481f9f7b",
+      "notes": "observed remote SHA 5d3e468a029262cb2c25a734572b52db8242c14d before this B"
+    },
+    {
+      "check_id": "B06-g12-stable-ledger",
+      "command": "python -m pytest tests/sbs/test_g0.py::test_g12_restart_does_not_drop_failures_or_reset_budget tests/sbs -q --tb=line",
+      "started_at": "2026-09-17T15:07:08+00:00",
+      "finished_at": "2026-09-17T15:07:25+00:00",
+      "exit_code": 0,
+      "status": "pass",
+      "log_relative": "reports/rounds/R02B/check-logs/pytest-g12-ledger.log",
+      "log_sha256": "sha256:4df410e390b2445dca276bce29ec3a179e1b535064889de4b9ea245cf98e6cfb",
+      "notes": "42 passed; G12 uses open_request_ledger and two run_pilot starts"
     }
   ]
 }
