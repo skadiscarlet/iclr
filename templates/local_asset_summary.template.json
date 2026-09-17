@@ -1,0 +1,29 @@
+{
+  "document_kind": "template_not_results",
+  "schema_version": "1.0",
+  "round_id": "R02",
+  "collection_code_sha": null,
+  "experiment_implementation_sha": null,
+  "snapshot_id": null,
+  "workspace_alias": "primary_workspace",
+  "delivery_workspace_alias": "delivery_workspace",
+  "scan_status": "not_started",
+  "scan_complete": false,
+  "asset_group_count": null,
+  "counts_source": null,
+  "raw_inventory_digest": null,
+  "scope": {
+    "roots": [],
+    "excluded": [],
+    "unresolved_locations": []
+  },
+  "publication_review": {
+    "status": "pending",
+    "raw_data_uploaded": false
+  },
+  "checks": [],
+  "discrepancies": [],
+  "blockers": [],
+  "review_status": "pending",
+  "original_content_remote_review": "not_performed_by_this_template"
+}

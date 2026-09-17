@@ -1,0 +1,70 @@
+{
+  "document_kind": "template_not_results",
+  "schema_version": "1.0",
+  "asset_id": null,
+  "asset_kind": null,
+  "local_locator_policy": "opaque_or_safe_repo_relative",
+  "safe_relative_locator": null,
+  "source_origin": {
+    "kind": "unknown",
+    "reference": null,
+    "revision": null,
+    "basis": "not_collected"
+  },
+  "purpose": null,
+  "used_by": [],
+  "record_unit": "unknown",
+  "counts": {
+    "files": null,
+    "records": null,
+    "pairs": null,
+    "version_instances": null,
+    "project_names": null,
+    "independent_groups": null,
+    "complete": false,
+    "count_basis": null
+  },
+  "schema": {
+    "profile_ref": null,
+    "record_values_exported": false
+  },
+  "provenance": {
+    "observed_or_reported": "not_collected",
+    "source_asset_ids": []
+  },
+  "integrity": {
+    "manifest_ref": null,
+    "manifest_sha256": null,
+    "content_hash_coverage": "not_collected"
+  },
+  "generation": {
+    "builder_path": null,
+    "builder_code_sha": null,
+    "command_template": null,
+    "config_sha256": null,
+    "rebuildability": "unknown"
+  },
+  "quality_status": {
+    "material_ready": "unknown",
+    "human_verified": "unknown",
+    "scoring_ready": "unknown",
+    "label_basis": "unknown",
+    "checks": []
+  },
+  "git_visibility": {
+    "state": "unknown",
+    "not_committed_reason": null
+  },
+  "publication_restrictions": {
+    "license_status": "unknown",
+    "raw_content_default": "do_not_publish",
+    "holdout_membership": "do_not_publish_by_default"
+  },
+  "review_evidence": {
+    "remote_visibility": "summary_only",
+    "content_review_status": "content_not_remotely_reviewed",
+    "refs": []
+  },
+  "gaps": [],
+  "next_action": null
+}

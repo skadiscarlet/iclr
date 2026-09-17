@@ -1,0 +1,18 @@
+{
+  "scope": "delivery_tool_only",
+  "executed_at_utc": "2026-09-16T16:10:17.313651+00:00",
+  "unittest_exit_code": 0,
+  "unittest_count": 16,
+  "unittest_log_sha256": "d0b6a6d4a825d5833671dbb38aedbac928eee3622c6d4868e8e7fe4fe32264db",
+  "cli_smoke": {
+    "test_kind": "CLI_on_temporary_synthetic_workspace",
+    "exit_code": 0,
+    "files_observed": 1,
+    "sensitive_entries_skipped": 1,
+    "raw_values_absent_from_outputs": true,
+    "user_repository_or_data_accessed": false,
+    "model_calls": 0,
+    "network_calls": 0
+  },
+  "user_repository_review_performed": false
+}

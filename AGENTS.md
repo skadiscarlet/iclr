@@ -61,3 +61,4 @@ R01 范围：仓库盘点、可回退整理、actor/evaluator 数据隔离、离
 3. R01 接触过的真实样本一律 `split=dev_pilot`；`human_verified` 不得由 agent 自报。
 4. `review_status=accepted` 只能由后续负责人审阅后变更。
 5. 不得执行 `git reset --hard`、`git clean -fd`、`git push --force` 或改写公共历史。
+6. 执行当前轮任务前读取 `plans/EXECUTION_CONTRACT.md`。交付前更新 `reports/LOCAL_ASSETS.md` 与 `reports/local_assets/`。未提交的 data、local_data、artifacts、`.work` 或其他关键材料不得只在对话中口头说明。

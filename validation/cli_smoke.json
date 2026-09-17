@@ -1,0 +1,10 @@
+{
+  "test_kind": "CLI_on_temporary_synthetic_workspace",
+  "exit_code": 0,
+  "files_observed": 1,
+  "sensitive_entries_skipped": 1,
+  "raw_values_absent_from_outputs": true,
+  "user_repository_or_data_accessed": false,
+  "model_calls": 0,
+  "network_calls": 0
+}

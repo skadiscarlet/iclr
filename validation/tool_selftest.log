@@ -1,0 +1,21 @@
+test_binary_is_metadata_only (test_inventory.InventoryTests.test_binary_is_metadata_only) ... ok
+test_content_hash_is_actual_bytes (test_inventory.InventoryTests.test_content_hash_is_actual_bytes) ... ok
+test_csv_arbitrary_enum_value_not_exported (test_inventory.InventoryTests.test_csv_arbitrary_enum_value_not_exported) ... ok
+test_file_limit_reports_partial (test_inventory.InventoryTests.test_file_limit_reports_partial) ... ok
+test_hash_budget_does_not_fake_hash (test_inventory.InventoryTests.test_hash_budget_does_not_fake_hash) ... ok
+test_invalid_jsonl_preserves_error_count (test_inventory.InventoryTests.test_invalid_jsonl_preserves_error_count) ... ok
+test_inventory_does_not_export_contents_or_absolute_root (test_inventory.InventoryTests.test_inventory_does_not_export_contents_or_absolute_root) ... ok
+test_missing_is_not_zero_verified_records (test_inventory.InventoryTests.test_missing_is_not_zero_verified_records) ... ok
+test_own_scan_output_not_recursively_inventoried (test_inventory.InventoryTests.test_own_scan_output_not_recursively_inventoried) ... ok
+test_profile_exports_schema_and_allowed_enums_only (test_inventory.InventoryTests.test_profile_exports_schema_and_allowed_enums_only) ... ok
+test_profile_limit_is_not_full_count (test_inventory.InventoryTests.test_profile_limit_is_not_full_count) ... ok
+test_relative_path_escape_rejected (test_inventory.InventoryTests.test_relative_path_escape_rejected) ... ok
+test_sensitive_files_are_not_listed_or_profiled (test_inventory.InventoryTests.test_sensitive_files_are_not_listed_or_profiled) ... ok
+test_symlink_outside_not_followed (test_inventory.InventoryTests.test_symlink_outside_not_followed) ... ok
+test_tracked_ignored_and_untracked_distinguished (test_inventory.InventoryTests.test_tracked_ignored_and_untracked_distinguished) ... ok
+test_unsafe_schema_key_redacted (test_inventory.InventoryTests.test_unsafe_schema_key_redacted) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.058s
+
+OK
