@@ -143,29 +143,32 @@ def recompute_inventory(repo: Path) -> dict[str, Any]:
 
 def _x01(repo: Path) -> dict[str, Any]:
     inv = recompute_inventory(repo)
-    catalog = repo / 'data' / 'catalog' / 'cases.jsonl'
-    catalog_state = 'missing'
-    if (repo / 'data').is_symlink():
-        catalog_state = 'symlink_not_followed'
-    elif catalog.is_file():
-        catalog_state = 'regular_file'
+    profile = local_asset_handoff.profile_file(repo, 'data/catalog/cases.jsonl', 4 * 1024**2, 2000)
+    catalog_state = profile.get('status')
+    catalog_records = profile.get('scanned_records')
+    catalog_complete = profile.get('complete')
     fact = (
         f"registry_rows={inv['candidate_pairs']}; unique_pair_ids={inv['candidate_pairs']}; "
         f"project_families={inv['project_families']}; each row is a pair "
         f"(buggy_revision+fixed_revision present); catalog_profile={catalog_state}; "
-        f"catalog_record_count=not_profiled_this_round"
+        f"catalog_scanned_records={catalog_records}; catalog_complete={catalog_complete}; "
+        f"declared_data_root_is_symlink={(repo / 'data').is_symlink()}"
     )
-    status = 'partial' if catalog_state == 'symlink_not_followed' else 'passed'
+    status = 'passed'
+    if catalog_state not in {'complete', 'complete_with_invalid_rows', 'prefix_only'}:
+        status = 'partial'
+    if catalog_records in (None, 0) and catalog_state != 'complete':
+        status = 'partial'
     if inv['duplicate_pair_ids']:
         status = 'failed'
     return _check(
         'X01', status,
         ['A-R01-CANDIDATES', 'A-EGSI-T1-CATALOG'],
-        'sbs.registry.load_candidates + data/catalog/cases.jsonl existence without follow',
+        'sbs.registry.load_candidates + profile_file(data/catalog/cases.jsonl) via declared-root alias',
         0 if status != 'failed' else 1,
         fact,
-        'Catalog scale for this round is taken from tracked metadata, not a verified walk of data/.',
-        'Keep scan_complete=false until a non-symlink catalog profile exists; do not treat catalog as empty.',
+        'Catalog is inventoried through the data/ alias; registry 24 is a sampled subset unless counts match.',
+        'Publish schema/enum counts only; do not upload catalog rows or the symlink target path.',
     )
 
 

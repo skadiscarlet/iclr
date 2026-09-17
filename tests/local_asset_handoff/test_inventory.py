@@ -94,19 +94,49 @@ class InventoryTests(unittest.TestCase):
     def test_symlink_root_is_not_empty_verified_dataset(self):
         external = Path(self.tmp.name) / 'outside_data'
         external.mkdir()
-        (external / 'secret.jsonl').write_text('{}\n')
+        (external / 'secret.jsonl').write_text(
+            json.dumps({'id': 'UNIQUE_EXTERNAL_RECORD', 'status': 'source_resolved'}) + '\n'
+        )
         data = self.root / 'data'
         shutil.rmtree(data)
         data.symlink_to(external)
         result = self.scan(profiles=['data/secret.jsonl'])
         roots = {row['root']: row for row in result['roots']}
-        self.assertEqual(roots['data']['status'], 'symlink_not_followed')
-        self.assertIsNone(roots['data']['files_observed'])
-        self.assertFalse(result['listing_complete_within_declared_scope'])
+        self.assertEqual(roots['data']['status'], 'complete_with_declared_exclusions')
+        self.assertEqual(roots['data']['files_observed'], 1)
+        self.assertTrue(roots['data']['declared_root_is_symlink'])
+        self.assertTrue(roots['data']['symlink_target_path_omitted'])
+        rows = self.rows()
+        self.assertEqual([row['relative_path'] for row in rows], ['data/secret.jsonl'])
+        exported = ''.join(p.read_text() for p in self.out.iterdir())
+        self.assertNotIn('UNIQUE_EXTERNAL_RECORD', exported)
+        self.assertNotIn(str(external), exported)
+        self.assertNotIn('/home/', exported)
         profile = json.loads((self.out / 'profiles.json').read_text())[0]
-        self.assertEqual(profile['status'], 'symlink_not_followed')
-        self.assertIsNone(profile['scanned_records'])
-        self.assertNotEqual(profile['status'], 'complete')
+        self.assertEqual(profile['status'], 'complete')
+        self.assertEqual(profile['scanned_records'], 1)
+        self.assertTrue(profile['complete'])
+        self.assertEqual(profile['relative_path'], 'data/secret.jsonl')
+
+    def test_declared_root_symlink_does_not_starve_work(self):
+        external = Path(self.tmp.name) / 'outside_data'
+        external.mkdir()
+        for i in range(20):
+            (external / f'{i}.txt').write_text(str(i))
+        data = self.root / 'data'
+        shutil.rmtree(data)
+        data.symlink_to(external)
+        (self.root / '.work').mkdir()
+        (self.root / '.work' / 'cached.txt').write_text('cache')
+        result = module.scan(self.root, ['data', '.work', 'artifacts'], self.out, max_files=10)
+        roots = {row['root']: row for row in result['roots']}
+        self.assertEqual(roots['data']['status'], 'partial_file_budget')
+        self.assertGreater(roots['data']['files_observed'], 0)
+        self.assertEqual(roots['.work']['status'], 'complete_with_declared_exclusions')
+        self.assertEqual(roots['.work']['files_observed'], 1)
+        self.assertFalse(result['listing_complete_within_declared_scope'])
+        exported = ''.join(p.read_text() for p in self.out.iterdir())
+        self.assertNotIn(str(external), exported)
 
     def test_published_handoff_rejects_template_and_absolute_home(self):
         with self.assertRaises(ValueError):

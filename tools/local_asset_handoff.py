@@ -55,18 +55,44 @@ def sensitive(rel: str) -> bool:
     return False
 
 
-def safe_path(root: Path, rel: str) -> Path:
+def safe_path(root: Path, rel: str, *, allow_root_symlink: bool = False) -> Path:
+    """Return a path under *rel* without emitting resolved absolute locations.
+
+    Declared roots such as ``data/`` may themselves be a symlink to the real
+    asset volume. That one hop is allowed so the goal can inventory local
+    data. Nested symlinks, ``..``, and absolute inputs stay rejected.
+    Outputs must keep the repo-relative alias; never the target path.
+    """
     pp = PurePosixPath(rel)
     if not rel or rel in {'.', '..'} or pp.is_absolute() or '..' in pp.parts or '\\' in rel:
         raise ValueError('relative_path_required')
     result = root
-    for part in pp.parts:
+    leading_symlink = False
+    for i, part in enumerate(pp.parts):
         result = result / part
         if result.is_symlink():
+            if allow_root_symlink and i == 0:
+                leading_symlink = True
+                continue
             raise ValueError('symlink_not_followed')
-    if not result.resolve().is_relative_to(root):
-        raise ValueError('outside_repository')
-    return result
+    resolved = result.resolve()
+    try:
+        in_repo = resolved.is_relative_to(root.resolve())
+    except (OSError, ValueError):
+        in_repo = False
+    if in_repo:
+        return result
+    if leading_symlink:
+        return result
+    raise ValueError('outside_repository')
+
+
+def alias_relative(path: Path, repo: Path, root_rel: str, walk_root: Path) -> str:
+    try:
+        return path.relative_to(repo).as_posix()
+    except ValueError:
+        inner = path.relative_to(walk_root)
+        return (PurePosixPath(root_rel) / inner.as_posix()).as_posix()
 
 
 def safe_git(root: Path, args: list[str], stdin: bytes | None = None) -> bytes | None:
@@ -108,7 +134,7 @@ def profile_file(root: Path, rel: str, max_bytes: int, max_records: int) -> dict
     if any(part in EXCLUDED_DIRS for part in PurePosixPath(rel).parts):
         result['status'] = 'excluded_environment_directory'; result['scanned_records'] = None; return result
     try:
-        path = safe_path(root, rel)
+        path = safe_path(root, rel, allow_root_symlink=True)
     except ValueError as e:
         result['status'] = str(e); result['scanned_records'] = None; return result
     if not path.is_file():
@@ -204,25 +230,49 @@ def scan(repo: Path, roots: list[str], output: Path, *, max_files: int = 10000,
     output.mkdir(parents=True, exist_ok=True)
     records: list[dict[str, Any]] = []
     seen: set[str] = set()
-    root_reports = []
     hashed_bytes = 0
     total_bytes = 0
     excluded_sensitive = 0
     symlinks_skipped = 0
     limit_hit = False
     failures = 0
-    for root_rel in dict.fromkeys(roots):
+    requested_roots = list(dict.fromkeys(roots))
+
+    def _walk_priority(root_rel: str) -> int:
+        # Inventory declared-root symlinks (typically data/) after small in-repo
+        # roots so a large external volume cannot drop registry/actor counts.
+        # .work caches come last.
+        if root_rel == '.work' or root_rel.startswith('.work/'):
+            return 2
+        if (repo / root_rel).is_symlink():
+            return 1
+        return 0
+
+    reports_by_root: dict[str, dict[str, Any]] = {}
+    for root_rel in requested_roots:
         if sensitive(root_rel):
-            root_reports.append({'root_alias': opaque(root_rel), 'status': 'excluded_sensitive'}); continue
-        rr: dict[str, Any] = {'root': root_rel, 'status': 'not_scanned', 'files_observed': 0}
-        root_reports.append(rr)
+            reports_by_root[root_rel] = {'root_alias': opaque(root_rel), 'status': 'excluded_sensitive'}
+            continue
+        reports_by_root[root_rel] = {'root': root_rel, 'status': 'not_scanned', 'files_observed': 0}
+    root_reports = [reports_by_root[r] for r in requested_roots if r in reports_by_root]
+    for root_rel in sorted(requested_roots, key=_walk_priority):
+        rr = reports_by_root[root_rel]
+        if rr.get('status') == 'excluded_sensitive':
+            continue
         if any(part in EXCLUDED_DIRS for part in PurePosixPath(root_rel).parts):
             rr['status'] = 'excluded_environment_directory'; continue
         if limit_hit:
             rr['status'] = 'not_scanned_file_budget'; continue
-        try: target = safe_path(repo, root_rel)
+        try:
+            target = safe_path(repo, root_rel, allow_root_symlink=True)
         except ValueError as e:
             rr['status'] = str(e); rr['files_observed'] = None; continue
+        if (repo / root_rel).is_symlink():
+            rr['declared_root_is_symlink'] = True
+            rr['symlink_target_path_omitted'] = True
+        reserve = 0
+        if _walk_priority(root_rel) < 2 and any(_walk_priority(r) == 2 for r in requested_roots):
+            reserve = min(8000, max(0, max_files // 3))
         if target == output or target.is_relative_to(output):
             rr['status'] = 'excluded_own_output'; continue
         if not target.exists():
@@ -238,7 +288,7 @@ def scan(repo: Path, roots: list[str], output: Path, *, max_files: int = 10000,
             kept = []
             for name in sorted(dirnames):
                 child = directory / name
-                relative = child.relative_to(repo).as_posix()
+                relative = alias_relative(child, repo, root_rel, target)
                 if child.is_symlink(): symlinks_skipped += 1; continue
                 if sensitive(relative): excluded_sensitive += 1; continue
                 if name in EXCLUDED_DIRS or child == output or child.is_relative_to(output): continue
@@ -246,13 +296,15 @@ def scan(repo: Path, roots: list[str], output: Path, *, max_files: int = 10000,
             dirnames[:] = kept
             for name in sorted(filenames):
                 path = directory / name
-                rel = path.relative_to(repo).as_posix()
+                rel = alias_relative(path, repo, root_rel, target)
                 if rel in seen: continue
                 seen.add(rel)
                 if path.is_symlink(): symlinks_skipped += 1; continue
                 if sensitive(rel): excluded_sensitive += 1; continue
                 if len(records) >= max_files:
                     limit_hit = True; rr['status'] = 'partial_file_budget'; break
+                if reserve and len(records) >= max_files - reserve:
+                    rr['status'] = 'partial_file_budget'; break
                 try:
                     before = path.stat()
                     if not path.is_file(): continue
@@ -308,7 +360,7 @@ def scan(repo: Path, roots: list[str], output: Path, *, max_files: int = 10000,
     summary = {'schema_version': '1.0', 'mode': 'local_metadata_inventory', 'round_id': round_id,
         'publication_status': 'local_review_required', 'collection_code_sha': code_sha,
         'collected_at': datetime.now(timezone.utc).isoformat(), 'workspace_alias': 'primary_workspace',
-        'roots': root_reports, 'listing_complete_within_declared_scope': not limit_hit and failures == 0 and all(r['status'] not in {'not_scanned_file_budget', 'outside_repository', 'relative_path_required', 'symlink_not_followed'} for r in root_reports),
+        'roots': root_reports, 'listing_complete_within_declared_scope': not limit_hit and failures == 0 and all(r['status'] not in {'not_scanned_file_budget', 'outside_repository', 'relative_path_required', 'symlink_not_followed', 'partial_file_budget', 'partial_read_errors'} for r in root_reports),
         'files_observed': len(records), 'observed_file_bytes': total_bytes,
         'bytes_hashed': hashed_bytes, 'files_content_hashed': sum(r['hash_status'] == 'complete' for r in records),
         'excluded_sensitive_entries': excluded_sensitive, 'symlinks_not_followed': symlinks_skipped,
@@ -318,7 +370,15 @@ def scan(repo: Path, roots: list[str], output: Path, *, max_files: int = 10000,
         'limits': {'max_files': max_files, 'max_hash_bytes': max_hash_bytes, 'max_file_hash_bytes': max_file_hash_bytes,
                    'max_profile_bytes': max_profile_bytes, 'max_profile_records': max_profile_records},
         'declared_exclusions': {'directories': sorted(EXCLUDED_DIRS), 'binary_content_hash_suffixes': sorted(BINARY_SUFFIXES), 'own_output_directory': True},
-        'interpretation_limits': ['Missing directories are not empty verified datasets.', 'Enumeration and record fields are observations, not verified semantic labels.', 'Profiles export schema and allow-listed enum counts, not arbitrary record values.', 'File inventory is local; review filenames, memberships, labels, privacy, and licenses before publication.', 'No source code, sample project, model, or network request was executed.']}
+        'interpretation_limits': [
+            'Missing directories are not empty verified datasets.',
+            'Enumeration and record fields are observations, not verified semantic labels.',
+            'Profiles export schema and allow-listed enum counts, not arbitrary record values.',
+            'File inventory is local; review filenames, memberships, labels, privacy, and licenses before publication.',
+            'No source code, sample project, model, or network request was executed.',
+            'A declared root may itself be a directory symlink to the local asset volume; it is walked through the repo-relative alias and the target path is omitted. Nested symlinks are not followed.',
+            'Walk order is in-repo roots, then declared-root symlinks, then .work, so a large data volume cannot drop registry or actor inventory.',
+        ]}
     (output / 'scan_summary.json').write_text(json.dumps(summary, ensure_ascii=False, indent=2) + '\n')
     return summary
 
