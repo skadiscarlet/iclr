@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "round_id": "R02",
+  "supplement": "R02A",
+  "branch": "research/naacl2027-r02",
+  "checkpoint": "B",
+  "local_sha": "a6698e278d83b9d0d3c467cf3c26c40f53fc487e",
+  "remote_ref": "refs/heads/research/naacl2027-r02",
+  "remote_sha": "a6698e278d83b9d0d3c467cf3c26c40f53fc487e",
+  "remote_sha_match": "yes",
+  "collection_code_sha": "e154e27dad197253b2594405a4c253bf857c2744",
+  "experiment_implementation_sha": "dcf80581b7d887a761d9acf484f6fef13a516d8c",
+  "raw_data_uploaded": false,
+  "new_model_calls_or_training": "none_by_design",
+  "notes": "Observed remote SHA of checkpoint B on origin refs/heads/research/naacl2027-r02. This receipt is committed as C afterwards; C's own SHA is not written into this file."
+}
