@@ -8,7 +8,14 @@ import pytest
 from sbs.binding import apply_atomic_update, reject_replaced_body
 from sbs.errors import BindingError, FairnessError, PilotBudgetError, PilotConfigError, VersionBoundError
 from sbs.isolation import IsolatedStore, assert_real_model_actor_root, load_case_view
-from sbs.pilot import RequestLedger, parse_model_output
+from sbs.pilot import (
+    RequestLedger,
+    load_pilot_config,
+    open_request_ledger,
+    parse_model_output,
+    request_ledger_path,
+    run_pilot,
+)
 from sbs.prompts import (
     RenderedPrompt,
     assert_public_fairness_payloads,
@@ -382,14 +389,73 @@ def test_g11_different_notes_same_public_evidence_allowed() -> None:
     assert history.clip_bounds == sbs.clip_bounds
 
 
-def test_g12_restart_does_not_drop_failures_or_reset_budget(tmp_path: Path) -> None:
-    path = tmp_path / "ledger.jsonl"
-    ledger = RequestLedger(path, hard_total=192)
-    ledger.reserve({"phase": "E0", "status": "failed", "raw": "nope"})
-    assert ledger.consumed() == 1
-    restarted = RequestLedger(path, hard_total=192)
+def test_g12_restart_does_not_drop_failures_or_reset_budget(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from sbs import pilot as pilot_mod
+    from sbs.tokens import CharTokenCounter
+
+    payload = json.loads((REPO / "configs" / "r02b_pilot.lock.json").read_text(encoding="utf-8"))
+    payload["run_output_root"] = "artifacts/r02b/runs"
+    config_path = tmp_path / "configs" / "r02b_pilot.lock.json"
+    config_path.parent.mkdir(parents=True)
+    config_path.write_text(json.dumps(payload), encoding="utf-8")
+    config = load_pilot_config(config_path)
+    first = open_request_ledger(tmp_path, config)
+    expected = tmp_path / "artifacts" / "r02b" / "request_ledger.jsonl"
+    assert first.path == expected
+    assert first.path == request_ledger_path(tmp_path, config)
+    first.reserve({"phase": "E0", "status": "failed", "raw": "nope"})
+    restarted = open_request_ledger(tmp_path, config)
+    assert restarted.path == first.path
     assert restarted.consumed() == 1
     assert restarted.entries()[0]["status"] == "failed"
+
+    class FakeModel:
+        def __init__(self, *args: object, **kwargs: object) -> None:
+            self.counter = CharTokenCounter()
+
+        def generate(self, prompt: str, max_new_tokens: int, seed: int) -> dict:
+            return {
+                "text": "not-json",
+                "input_tokens": 3,
+                "output_tokens": 2,
+                "request_sha256": sha256_text(prompt),
+            }
+
+    monkeypatch.setattr(pilot_mod, "FrozenModel", FakeModel)
+    monkeypatch.setattr(
+        pilot_mod,
+        "validate_pilot_manifest",
+        lambda *args, **kwargs: {
+            "ok": True,
+            "instances": 0,
+            "validated": 0,
+            "problems": [],
+            "model_called": False,
+        },
+    )
+    manifest = tmp_path / "local_data" / "r02b" / "actor_manifest.json"
+    manifest.parent.mkdir(parents=True)
+    manifest.write_text(
+        json.dumps(
+            {
+                "task_id": "R02B",
+                "instances": [],
+                "evaluator_relative_root": "local_data/r02b/evaluator",
+            }
+        ),
+        encoding="utf-8",
+    )
+    before = open_request_ledger(tmp_path, config).consumed()
+    run_a = run_pilot(tmp_path, config_path, code_sha="test-a", phase="e0")
+    run_b = run_pilot(tmp_path, config_path, code_sha="test-b", phase="e0")
+    assert Path(run_a["request_ledger"]) == expected
+    assert Path(run_b["request_ledger"]) == expected
+    assert expected.parent.name != Path(run_a["run_dir"]).name
+    assert run_b["ledger_consumed"] > run_a["ledger_consumed"] >= before
+    third_open = open_request_ledger(tmp_path, load_pilot_config(config_path))
+    assert third_open.consumed() == run_b["ledger_consumed"]
     tiny = RequestLedger(tmp_path / "tiny.jsonl", hard_total=1)
     tiny.reserve({"ok": True})
     with pytest.raises(PilotBudgetError):

@@ -95,6 +95,24 @@ class RequestLedger:
         return current + 1
 
 
+def request_ledger_path(workspace: Path, config: FrozenPilotConfig) -> Path:
+    """Stable path for the 192-cap ledger. Not a timestamped run directory."""
+
+    relative = Path(config.run_output_root)
+    if relative.is_absolute() or ".." in relative.parts:
+        raise PilotConfigError("run_output_root must be a relative path without '..'")
+    return Path(workspace) / relative.parent / "request_ledger.jsonl"
+
+
+def open_request_ledger(workspace: Path, config: FrozenPilotConfig) -> RequestLedger:
+    """Open the workspace-stable request ledger used by run-pilot restarts."""
+
+    hard_total = int(config.request_caps.get("hard_total", HARD_TOTAL))
+    if hard_total != HARD_TOTAL:
+        raise PilotConfigError("hard_total must be 192")
+    return RequestLedger(request_ledger_path(workspace, config), hard_total=hard_total)
+
+
 def parse_model_output(raw: str) -> tuple[dict[str, Any] | None, str]:
     """Store illegal JSON as failed. Do not repair semantics."""
 
@@ -702,7 +720,7 @@ def run_pilot(
     started = _now()
     run_root = workspace / config.run_output_root / started.replace(":", "")
     run_root.mkdir(parents=True, exist_ok=True)
-    ledger = RequestLedger(run_root / "request_ledger.jsonl")
+    ledger = open_request_ledger(workspace, config)
     actor_manifest = json.loads(actor_manifest_path.read_text(encoding="utf-8"))
     from sbs.static_check import count_complete_version_pairs
 
@@ -813,6 +831,10 @@ def run_pilot(
         "complete_version_pairs": complete,
         "manifest_mode": manifest.mode,
         "validation": validation,
+        "request_ledger": ledger.path.as_posix(),
+        "ledger_consumed": ledger.consumed(),
     }
     _write_json(run_root / "summary.json", summary)
+    snapshot = run_root / "request_ledger.jsonl"
+    snapshot.write_bytes(ledger.path.read_bytes())
     return summary
