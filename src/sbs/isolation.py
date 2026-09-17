@@ -10,6 +10,7 @@ from sbs.errors import (
     HashMismatchError,
     MissingEvidenceError,
     PathEscapeError,
+    PilotConfigError,
     StaleEvidenceError,
     UnauthorizedEvidenceError,
 )
@@ -97,6 +98,8 @@ class IsolatedStore:
         evidence_id: str,
         *,
         expected_generation: str | None = None,
+        expected_instance: str | None = None,
+        expected_revision: str | None = None,
     ) -> tuple[EvidenceRecord, Observation]:
         if evidence_id not in case.allowed_evidence_ids:
             raise UnauthorizedEvidenceError(
@@ -110,6 +113,15 @@ class IsolatedStore:
             ) from exc
         if record.evidence_id != evidence_id:
             raise HashMismatchError("evidence_id does not match filename")
+        if expected_instance is not None and case.instance_id is not None:
+            if case.instance_id != expected_instance:
+                raise StaleEvidenceError("evidence instance_id does not match current instance")
+        if (
+            expected_revision is not None
+            and record.source_revision is not None
+            and record.source_revision != expected_revision
+        ):
+            raise StaleEvidenceError("evidence source_revision does not match current instance")
         body = self.read_bytes(record.relative_read_path)
         digest = sha256_bytes(body)
         if digest != record.content_sha256:
@@ -154,3 +166,27 @@ def load_case_view(store: IsolatedStore) -> CaseView:
 
     payload: Any = json.loads(store.read_text("case.json"))
     return parse_case_view(payload)
+
+
+REAL_FORBIDDEN_RELATIVE = (
+    "script.json",
+    "answers.json",
+    "pairs.jsonl",
+    "ReplayScript.json",
+    "canary.json",
+    "evaluator.json",
+)
+
+
+def assert_real_model_actor_root(actor_root: Path) -> None:
+    """Refuse fixture scripts, evaluator maps, and canaries on the real-model path."""
+
+    root = Path(actor_root)
+    for name in REAL_FORBIDDEN_RELATIVE:
+        path = root / name
+        if path.exists():
+            raise PilotConfigError(f"real-model actor root contains forbidden {name}")
+    for path in root.rglob("*"):
+        lowered = path.name.lower()
+        if "canary" in lowered or lowered in {"answers.json", "script.json"}:
+            raise PilotConfigError("real-model actor root contains fixture/evaluator/canary")

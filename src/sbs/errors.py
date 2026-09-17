@@ -41,3 +41,27 @@ class ValueScorerUnavailable(RuntimeError):
 
 class ReplayConfigError(ValueError):
     """Smoke/replay config is not an offline fixture replay."""
+
+
+class FairnessError(ValueError):
+    """History and SBS public evidence or final prompts are not aligned."""
+
+
+class BindingError(ValueError):
+    """Evidence ref update failed atomic validation; caller state is unchanged."""
+
+
+class VersionBoundError(ValueError):
+    """Actor package is not version-bound (instance + revision + generation)."""
+
+
+class PilotConfigError(ValueError):
+    """Frozen-pilot config or actor manifest is not runnable."""
+
+
+class PilotBudgetError(ValueError):
+    """Request would exceed the persisted hard cap."""
+
+
+class ContextInsufficientError(ValueError):
+    """Shared context budget cannot keep required public evidence."""

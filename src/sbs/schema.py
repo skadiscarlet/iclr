@@ -102,6 +102,13 @@ class LineSpan(_ActorModel):
     start_line: int | None = None
     end_line: int | None = None
 
+    def covers(self, other: "LineSpan") -> bool:
+        if self.start_line is None or self.end_line is None:
+            return False
+        if other.start_line is None or other.end_line is None:
+            return False
+        return self.start_line <= other.start_line and other.end_line <= self.end_line
+
 
 class EvidenceRecord(_ActorModel):
     evidence_id: str
@@ -138,6 +145,8 @@ class CaseView(_ActorModel):
     split: SplitId
     material_kind: MaterialKind
     project_family: str | None = None
+    instance_id: str | None = None
+    generation_id: str | None = None
 
     @field_validator("case_id")
     @classmethod
@@ -323,3 +332,176 @@ def parse_case_view(payload: Any) -> CaseView:
 
 def parse_smoke_config(payload: Any) -> SmokeConfig:
     return SmokeConfig.model_validate(payload)
+
+
+class VisibleEvidence(_ActorModel):
+    """Normalized public evidence. Provenance hashes stay off-prompt by default."""
+
+    instance_id: str
+    evidence_id: str
+    material: str | None
+    visible_sha256: str
+    display_path: str
+    displayed_span: LineSpan
+    found: bool
+    parseable: bool
+    uncertainty: str
+
+    @field_validator("visible_sha256")
+    @classmethod
+    def _hash_prefix(cls, value: str) -> str:
+        if not value.startswith("sha256:") or len(value) != 71:
+            raise ValueError("visible_sha256 must be sha256:<64 hex>")
+        return value
+
+
+class HistoryEvent(_ActorModel):
+    kind: Literal["observation"] = "observation"
+    evidence_id: str
+    found: bool
+    provenance: str
+    uncertainty: str
+    material: str | None
+    displayed_span: LineSpan | None = None
+    visible_sha256: str | None = None
+
+
+class EvidenceRef(_ActorModel):
+    evidence_id: str
+    instance_id: str
+    generation_id: str
+    span: LineSpan | None = None
+
+
+class ModelUpdate(_ActorModel):
+    hypothesis_id: str
+    support_refs: list[EvidenceRef] = Field(default_factory=list)
+    counter_refs: list[EvidenceRef] = Field(default_factory=list)
+    unknowns: list[str] = Field(default_factory=list)
+    limitations: list[str] = Field(default_factory=list)
+    status: HypothesisStatus | None = None
+    verdict: DecisionVerdict | None = None
+    hypothesis_text: str | None = None
+
+
+class InstanceManifest(_ActorModel):
+    """Actor-root version-bound identity. source_revision is required."""
+
+    schema_version: Literal["1.0"] = "1.0"
+    instance_id: str
+    generation_id: str
+    source_revision: str
+    split: SplitId
+    material_kind: MaterialKind
+    case_relative_path: Literal["case.json"] = "case.json"
+
+    @field_validator("source_revision")
+    @classmethod
+    def _revision_required(cls, value: str) -> str:
+        if not value or value == "None":
+            raise ValueError("source_revision is required for version-bound instances")
+        if len(value) != 40 or any(ch not in "0123456789abcdef" for ch in value):
+            raise ValueError("source_revision must be a lowercase 40-hex commit")
+        return value
+
+    @field_validator("instance_id")
+    @classmethod
+    def _opaque_instance(cls, value: str) -> str:
+        lowered = value.lower()
+        if lowered.startswith("cve-") or lowered.startswith("ghsa-"):
+            raise ValueError("instance_id must be opaque")
+        for token in ("buggy", "fixed", "vulnerable", "patch", "pair-role"):
+            if token in lowered:
+                raise ValueError("instance_id must not encode pair role")
+        return value
+
+
+class FrozenPilotConfig(_ActorModel):
+    schema_version: Literal["1.0"] = "1.0"
+    mode: Literal["frozen_model_pilot"]
+    task_id: Literal["R02B"]
+    seed: int
+    split: SplitId
+    representations: list[Literal["history", "sbs"]]
+    order_seeds: list[int]
+    max_pairs: int
+    first_batch_pairs: int
+    model_calls_per_episode: int
+    max_input_tokens: int
+    max_new_tokens: int
+    batch_size: Literal[1]
+    do_sample: Literal[False]
+    request_caps: dict[str, int]
+    wall_clock_limit_seconds: int
+    paid_budget_usd: Literal[0]
+    trust_remote_code: Literal[False] = False
+    enable_branch_rollouts: Literal[False] = False
+    enable_training: Literal[False] = False
+    actor_manifest_relative_path: str
+    run_output_root: str
+    public_evidence_policy: Literal["common_rendered_blocks"] = "common_rendered_blocks"
+    semantic_scoring_requires_human_review: Literal[True] = True
+    model: dict[str, Any]
+    actor_manifest_sha256: str | None = None
+    implementation_sha: str | None = None
+
+
+class FrozenPilotManifest(_ActorModel):
+    schema_version: Literal["1.0"] = "1.0"
+    mode: Literal["frozen_model_pilot"]
+    task_id: Literal["R02B"]
+    seed: int
+    split: SplitId
+    representations: list[Literal["history", "sbs"]]
+    model_repo_id: str
+    model_revision: str
+    dtype: str
+    device: str
+    trust_remote_code: Literal[False] = False
+    model_calls: int
+    model_calls_allowed: int
+    requests_attempted: int
+    hard_total: int
+    paid_budget_usd: Literal[0] = 0
+    compute_detection_metrics: Literal[False] = False
+    detection_metrics: None = None
+    detection_metrics_status: Literal["not_evaluated"] = "not_evaluated"
+    semantic_metrics: None = None
+    semantic_metrics_status: Literal["not_evaluated"] = "not_evaluated"
+    training_loss: None = None
+    q_accuracy: None = None
+    value_scorer_available: Literal[False] = False
+    code_sha: str | None = None
+    config_sha256: str
+    material_sha256: str
+    output_index: dict[str, str]
+    exit_status: str
+    started_at: str | None = None
+    finished_at: str | None = None
+    fairness_hashes: dict[str, str] = Field(default_factory=dict)
+
+
+def instance_cache_key(instance_id: str, revision: str, generation: str) -> str:
+    return sha256_text(f"{instance_id}\n{revision}\n{generation}")
+
+
+def parse_frozen_pilot_config(payload: Any) -> FrozenPilotConfig:
+    if not isinstance(payload, dict):
+        raise ValueError("pilot config must be an object")
+    if payload.get("document_kind") == "template_not_runnable_until_locked":
+        raise ValueError("pilot template is not a locked config")
+    data = {
+        key: value
+        for key, value in payload.items()
+        if key not in {"document_kind", "env_probe"}
+    }
+    return FrozenPilotConfig.model_validate(data)
+
+
+def load_instance_manifest_payload(payload: Any) -> InstanceManifest:
+    if not isinstance(payload, dict):
+        raise ValueError("instance manifest must be an object")
+    allowed = set(InstanceManifest.model_fields)
+    return InstanceManifest.model_validate(
+        {key: payload[key] for key in allowed if key in payload}
+    )

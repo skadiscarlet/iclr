@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0",
+  "task_id": "R02B",
+  "generation_id": "r02b-g1",
+  "gold_assisted_context": true,
+  "task_scope": "given_location_frozen_evidence",
+  "split": "dev_pilot",
+  "first_batch_pair_id": "r01-pair-01",
+  "pairs": [
+    {
+      "pair_id": "r01-pair-01",
+      "include": true,
+      "track": "conventional"
+    },
+    {
+      "pair_id": "r01-pair-12",
+      "include": true,
+      "track": "conventional"
+    },
+    {
+      "pair_id": "r01-pair-13",
+      "include": true,
+      "track": "logic_draft"
+    },
+    {
+      "pair_id": "r01-pair-15",
+      "include": true,
+      "track": "logic_draft"
+    }
+  ]
+}

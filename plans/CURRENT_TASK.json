@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0",
+  "document_kind": "task_directive_not_execution_result",
+  "task_id": "R02B",
+  "parent_round": "R02",
+  "entrypoint": "plans/rounds/R02B.md",
+  "repository": "skadiscarlet/iclr",
+  "branch": "research/naacl2027-r02",
+  "reviewed_base_sha": "26e86bccfa656e59b3e234fd3fd05e4c83e357ec",
+  "supersedes_unexecuted_R02_v1_schedule": true,
+  "preserve_R01_R02A_history": true,
+  "authorized_scope": "bounded_static_known_snapshot_pilot",
+  "paid_budget_usd": 0,
+  "local_frozen_inference_allowed_after_gates": true,
+  "training_allowed": false,
+  "new_vulnerability_discovery_allowed": false
+}

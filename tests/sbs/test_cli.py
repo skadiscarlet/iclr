@@ -15,7 +15,15 @@ REPO = Path(__file__).resolve().parents[2]
 def test_cli_lists_required_commands() -> None:
     result = CliRunner().invoke(app, ["--help"])
     assert result.exit_code == 0
-    for command in ("doctor", "validate-registry", "replay", "validate-reports"):
+    for command in (
+        "doctor",
+        "validate-registry",
+        "replay",
+        "validate-reports",
+        "prepare-pilot",
+        "validate-pilot",
+        "run-pilot",
+    ):
         assert command in result.stdout
 
 

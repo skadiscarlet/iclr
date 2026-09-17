@@ -1,4 +1,4 @@
-"""R01 CLI: doctor, validate-registry, replay, validate-reports."""
+"""SBS CLI: R01 fixture replay plus R02B prepare/validate/run-pilot."""
 
 from __future__ import annotations
 
@@ -8,6 +8,8 @@ from pathlib import Path
 import typer
 
 from sbs.doctor import write_inventory
+from sbs.pilot import load_pilot_config, run_pilot, validate_pilot_manifest
+from sbs.prepare import prepare_pilot
 from sbs.registry import validate_registry_file
 from sbs.replay import load_smoke_config, redacted_manifest, replay_fixtures
 from sbs.reports import validate_reports
@@ -125,12 +127,82 @@ def replay(
     )
 
 
+@app.command("prepare-pilot")
+def prepare_pilot_cmd(
+    task: str = typer.Option("R02B", "--task", help="Task id."),
+    selection: Path = typer.Option(
+        Path("metadata/r02b_selection.json"),
+        "--selection",
+        help="Locked pair selection.",
+    ),
+) -> None:
+    """Build version-bound actor packs from the locked selection. No model call."""
+
+    if task != "R02B":
+        typer.echo("Error: only R02B prepare-pilot is implemented", err=True)
+        raise typer.Exit(code=1)
+    try:
+        result = prepare_pilot(_repo_root(), selection, allow_root_symlink=True)
+    except Exception as exc:
+        typer.echo(f"Error: prepare-pilot failed: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(json.dumps(result, sort_keys=True, default=str))
+
+
+@app.command("validate-pilot")
+def validate_pilot_cmd(
+    task: str = typer.Option("R02B", "--task", help="Task id."),
+    manifest: Path = typer.Option(
+        Path("local_data/r02b/actor_manifest.json"),
+        "--manifest",
+        help="Actor manifest path.",
+    ),
+) -> None:
+    """Validate actor packs. Must not call a model."""
+
+    if task != "R02B":
+        typer.echo("Error: only R02B validate-pilot is implemented", err=True)
+        raise typer.Exit(code=1)
+    try:
+        result = validate_pilot_manifest(_repo_root(), manifest)
+    except Exception as exc:
+        typer.echo(f"Error: validate-pilot failed: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    if result.get("model_called"):
+        raise typer.Exit(code=2)
+    typer.echo(json.dumps(result, sort_keys=True))
+
+
+@app.command("run-pilot")
+def run_pilot_cmd(
+    task: str = typer.Option("R02B", "--task", help="Task id."),
+    config: Path = typer.Option(
+        Path("configs/r02b_pilot.lock.json"),
+        "--config",
+        help="Locked frozen-pilot config.",
+    ),
+) -> None:
+    """Run the bounded local frozen-model pilot."""
+
+    if task != "R02B":
+        typer.echo("Error: only R02B run-pilot is implemented", err=True)
+        raise typer.Exit(code=1)
+    repo = _repo_root()
+    try:
+        load_pilot_config(config)
+        result = run_pilot(repo, config, code_sha=_git_head(repo))
+    except Exception as exc:
+        typer.echo(f"Error: run-pilot failed: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(json.dumps(result, sort_keys=True, default=str))
+
+
 @app.command("validate-reports")
 def validate_reports_cmd(
     round: str = typer.Option("R01", "--round", help="Round id."),
     phase: str = typer.Option("pre-push", "--phase", help="pre-push or post-push."),
 ) -> None:
-    """Validate machine-readable R01 reports."""
+    """Validate machine-readable round reports."""
 
     try:
         result = validate_reports(_repo_root(), round, phase)
