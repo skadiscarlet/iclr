@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0",
+  "task_id": "R02B",
+  "checks": [
+    {
+      "check_id": "B00-git-identity",
+      "command": "git branch --show-current && git rev-parse HEAD && git merge-base --is-ancestor 26e86bccfa656e59b3e234fd3fd05e4c83e357ec HEAD",
+      "started_at": "2026-09-17T13:40:00+00:00",
+      "finished_at": "2026-09-17T13:40:01+00:00",
+      "exit_code": 0,
+      "status": "pass",
+      "log_relative": "reports/rounds/R02B/check-logs/git-identity.txt",
+      "log_sha256": "sha256:334ca905698bb0091e109b56205d045eacab6b26d609745f899fbcd11a05ded9",
+      "notes": "branch research/naacl2027-r02; ancestor 26e86bcc yes; origin skadiscarlet/iclr"
+    },
+    {
+      "check_id": "B01-catalog-probe-tests",
+      "command": "python -m unittest discover -s tests/r02b_catalog_probe -v",
+      "started_at": "2026-09-17T14:30:22+00:00",
+      "finished_at": "2026-09-17T14:30:22+00:00",
+      "exit_code": 0,
+      "status": "pass",
+      "log_relative": "reports/rounds/R02B/check-logs/catalog-probe-tests.log",
+      "log_sha256": "sha256:d86eed46855684c59ae0c75a8632356960c2a25a4e205c0978766b48ad22a50c"
+    },
+    {
+      "check_id": "B01-catalog-probe",
+      "command": "python tools/r02b_catalog_probe.py --workspace . --allow-data-root-symlink --out artifacts/r02b/catalog_probe_1.json",
+      "started_at": "2026-09-17T13:45:00+00:00",
+      "finished_at": "2026-09-17T13:45:02+00:00",
+      "exit_code": 0,
+      "status": "pass",
+      "log_relative": "reports/rounds/R02B/check-logs/catalog-probe.log",
+      "log_sha256": "sha256:2012facd3e7241e0b68a1d5b6e8badcb6c94629942de7b10e2fd933548339d90",
+      "notes": "catalog_complete=true; valid_object_rows=300; 24 unique_match; nested_symlinks_followed=false"
+    },
+    {
+      "check_id": "B02-g0-pytest",
+      "command": "python -m pytest tests/sbs tests/r02b_catalog_probe -q --tb=line",
+      "started_at": "2026-09-17T14:30:22+00:00",
+      "finished_at": "2026-09-17T14:30:34+00:00",
+      "exit_code": 0,
+      "status": "pass",
+      "log_relative": "reports/rounds/R02B/check-logs/pytest-g0.log",
+      "log_sha256": "sha256:9fff0b33b1b3df92e1613e9d4440efabae88aa91cbc03ac9d1dc59816ac26a7a",
+      "notes": "57 passed including G01-G12 and R01 fixture_replay"
+    },
+    {
+      "check_id": "B03-validate-pilot",
+      "command": "python -m sbs validate-pilot --task R02B --manifest local_data/r02b/actor_manifest.json",
+      "started_at": "2026-09-17T14:30:34+00:00",
+      "finished_at": "2026-09-17T14:30:35+00:00",
+      "exit_code": 0,
+      "status": "pass",
+      "log_relative": "reports/rounds/R02B/check-logs/validate-pilot.log",
+      "log_sha256": "sha256:97ed68e774741b35a315d8c582ff7ca5b3c05deacb86b428568b8f033efff13d",
+      "notes": "model_called=false; 8 instances validated"
+    },
+    {
+      "check_id": "B05-run-pilot-1",
+      "command": "python -m sbs run-pilot --task R02B --config configs/r02b_pilot.lock.json",
+      "started_at": "2026-09-17T14:12:02+00:00",
+      "finished_at": "2026-09-17T14:19:55+00:00",
+      "exit_code": 0,
+      "status": "pass",
+      "log_relative": "reports/rounds/R02B/check-logs/run-pilot-1.log",
+      "log_sha256": "sha256:26ac62dcb95b047048f4d3130a4357b60320fbfd16832ded2ba95d5a250850de",
+      "notes": "process exit 0 is not semantic accuracy; 18 requests; parse_error on all model JSON; raw stored"
+    },
+    {
+      "check_id": "B05-run-pilot-2",
+      "command": "python -m sbs run-pilot --task R02B --config configs/r02b_pilot.lock.json",
+      "started_at": "2026-09-17T14:20:41+00:00",
+      "finished_at": "2026-09-17T14:28:30+00:00",
+      "exit_code": 0,
+      "status": "pass",
+      "log_relative": "reports/rounds/R02B/check-logs/run-pilot-2.log",
+      "log_sha256": "sha256:baa15d79d0c397b785cd61f0553f8802c09fa2419ae9c23518a1706207fbe5c3",
+      "notes": "repeat run also 18 real responses; not empty/error"
+    },
+    {
+      "check_id": "B06-validate-reports-pre-push",
+      "command": "python -m sbs validate-reports --round R02B --phase pre-push",
+      "started_at": "2026-09-17T14:32:00+00:00",
+      "finished_at": "2026-09-17T14:32:01+00:00",
+      "exit_code": 0,
+      "status": "pass",
+      "log_relative": "reports/rounds/R02B/check-logs/validate-reports-pre-push.log",
+      "log_sha256": "sha256:5881358186e140bb24b74c9951c3b0e7f526266fb2ac406d2327ad3cf0c8828a"
+    }
+  ]
+}

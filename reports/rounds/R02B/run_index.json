@@ -1,0 +1,54 @@
+{
+  "schema_version": "1.0",
+  "task_id": "R02B",
+  "implementation_sha": "59301b66c98cdb960bc35550939d0c0fcecbefd7",
+  "model": {
+    "repo_id": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
+    "resolved_revision": "2e1fd397ee46e1388853d2af2c993145b0f1098a",
+    "device": "cpu",
+    "dtype": "float32",
+    "trust_remote_code": false,
+    "paid_budget_usd": 0
+  },
+  "primary_run_id": "2026-09-17T141202+0000",
+  "runs": [
+    {
+      "run_id": "2026-09-17T140949+0000",
+      "kind": "e0_preflight",
+      "relative_dir": "artifacts/r02b/runs/2026-09-17T140949+0000",
+      "code_sha": "pre-A",
+      "requests_attempted": 2,
+      "episodes_completed": 0,
+      "notes": "pre-commit E0 only; not the protocol primary"
+    },
+    {
+      "run_id": "2026-09-17T141202+0000",
+      "kind": "e0_plus_first_batch",
+      "relative_dir": "artifacts/r02b/runs/2026-09-17T141202+0000",
+      "code_sha": "59301b66c98cdb960bc35550939d0c0fcecbefd7",
+      "requests_attempted": 18,
+      "episodes_completed": 4,
+      "e0_requests": 2,
+      "e1_requests": 16,
+      "parse_status_counts": {"parse_error": 18, "parsed": 0},
+      "semantic_metrics": null,
+      "fairness": "per-step public evidence hashes equal across history/sbs; recorded in run_manifest.fairness_hashes",
+      "raw_visibility": "local_only_gitignored",
+      "instances": [
+        "inst-6bf462ca01bb071f",
+        "inst-b750a376e1e3c54c"
+      ],
+      "representations": ["history", "sbs"],
+      "order": "single_first_batch"
+    },
+    {
+      "run_id": "2026-09-17T142041+0000",
+      "kind": "repeat_e0_plus_first_batch",
+      "relative_dir": "artifacts/r02b/runs/2026-09-17T142041+0000",
+      "code_sha": "59301b66c98cdb960bc35550939d0c0fcecbefd7",
+      "requests_attempted": 18,
+      "episodes_completed": 4,
+      "notes": "second CLI run also produced 18 raw responses; not empty or process-error"
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+branch=research/naacl2027-r02
+head=59301b66c98cdb960bc35550939d0c0fcecbefd7
+origin=github.com/skadiscarlet/iclr
+ancestor_26e86bcc=yes
+implementation_sha=59301b66c98cdb960bc35550939d0c0fcecbefd7

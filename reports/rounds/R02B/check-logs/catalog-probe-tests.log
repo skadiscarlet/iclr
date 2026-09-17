@@ -1,0 +1,20 @@
+test_duplicate_matches (test_probe.ProbeTests.test_duplicate_matches) ... ok
+test_exact_size_limit_is_complete (test_probe.ProbeTests.test_exact_size_limit_is_complete) ... ok
+test_explicit_root_symlink (test_probe.ProbeTests.test_explicit_root_symlink) ... ok
+test_invalid_json_retains_count (test_probe.ProbeTests.test_invalid_json_retains_count) ... ok
+test_invalid_utf8 (test_probe.ProbeTests.test_invalid_utf8) ... ok
+test_leaf_symlink (test_probe.ProbeTests.test_leaf_symlink) ... ok
+test_missing_key_is_not_zero_corpus (test_probe.ProbeTests.test_missing_key_is_not_zero_corpus) ... ok
+test_nested_directory_symlink (test_probe.ProbeTests.test_nested_directory_symlink) ... ok
+test_no_newline_at_eof (test_probe.ProbeTests.test_no_newline_at_eof) ... ok
+test_non_object (test_probe.ProbeTests.test_non_object) ... ok
+test_output_guard (test_probe.ProbeTests.test_output_guard) ... ok
+test_partial_bytes_no_full_digest (test_probe.ProbeTests.test_partial_bytes_no_full_digest) ... ok
+test_record_limit (test_probe.ProbeTests.test_record_limit) ... ok
+test_regular_root (test_probe.ProbeTests.test_regular_root) ... ok
+test_root_symlink_requires_flag (test_probe.ProbeTests.test_root_symlink_requires_flag) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.007s
+
+OK

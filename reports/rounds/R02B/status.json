@@ -1,0 +1,44 @@
+{
+  "schema_version": "2.0",
+  "task_id": "R02B",
+  "parent_round": "R02",
+  "reviewed_base_sha": "26e86bccfa656e59b3e234fd3fd05e4c83e357ec",
+  "implementation_sha": "59301b66c98cdb960bc35550939d0c0fcecbefd7",
+  "collection_code_sha": "59301b66c98cdb960bc35550939d0c0fcecbefd7",
+  "engineering_status": "completed",
+  "data_status": "partial",
+  "model_run_status": "completed",
+  "human_annotation_status": "not_checked",
+  "delivery_status": "not_pushed",
+  "review_status": "pending",
+  "g0_status": "passed",
+  "catalog_profile_status": "complete",
+  "full_workspace_scan_status": "partial_by_design",
+  "raw_data_remote_review": "not_performed",
+  "counts": {
+    "catalog_records": 300,
+    "registered_candidate_pairs": 24,
+    "legacy_ready_flag_pairs": 2,
+    "single_version_actor_packages": 0,
+    "version_bound_actor_instances": 8,
+    "complete_version_pairs": 4,
+    "logic_draft_pairs": 2,
+    "human_verified_pairs": 0,
+    "independent_group_count": null,
+    "project_name_count": 24,
+    "requests_attempted": 18,
+    "episodes_completed": 4
+  },
+  "semantic_metrics": null,
+  "semantic_metrics_status": "not_evaluated",
+  "training_status": "not_started_by_design",
+  "blockers": [
+    "logic_draft_pairs remain obligation_generic; not semantically qualified",
+    "all 18 frozen-model outputs failed JSON parse (markdown fences and/or illegal verdict); stored raw, not repaired",
+    "independent_group_count not examined"
+  ],
+  "nonblocking_exclusions": [
+    "unrelated_execute_only_launchers",
+    "legacy_work_cache"
+  ]
+}

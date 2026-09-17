@@ -1,16 +1,17 @@
 {
   "document_kind": "local_asset_summary",
   "schema_version": "1.0",
-  "round_id": "R02",
-  "collection_code_sha": "5a6cb24d4c5448194277ed924b31dd0c8b5339e6",
-  "experiment_implementation_sha": "dcf80581b7d887a761d9acf484f6fef13a516d8c",
-  "snapshot_id": "r02a-local-assets-5a6cb24",
+  "round_id": "R02B",
+  "collection_code_sha": "59301b66c98cdb960bc35550939d0c0fcecbefd7",
+  "experiment_implementation_sha": "59301b66c98cdb960bc35550939d0c0fcecbefd7",
+  "snapshot_id": "r02b-local-assets-59301b6",
+  "previous_snapshot_id": "r02a-local-assets-5a6cb24",
   "workspace_alias": "primary_workspace",
   "delivery_workspace_alias": "delivery_workspace",
   "same_worktree": true,
   "branch": "research/naacl2027-r02",
-  "collected_at": "2026-09-17T13:10:18.604101+00:00",
-  "scan_status": "partial",
+  "collected_at": "2026-09-17T14:30:00+00:00",
+  "scan_status": "partial_by_design",
   "scan_complete": false,
   "scan_complete_reason": "data/ declared-root symlink was walked via the repo alias; extractor listed 21896 of find -H data -type f count 398686 (raw-dominated) after file-budget reserve for .work; three execute-only scripts PermissionError; listing_complete_within_declared_scope=false",
   "publication_status": "local_review_required",
@@ -34,7 +35,13 @@
     "data_files_observed_extractor_prefix": 21896,
     "data_files_find_H": 398686,
     "catalog_records": 300,
-    "catalog_complete": true
+    "catalog_complete": true,
+    "legacy_ready_flag_pairs": 2,
+    "version_bound_actor_instances": 8,
+    "complete_version_pairs": 4,
+    "logic_draft_pairs": 2,
+    "independent_group_count": null,
+    "r02b_primary_requests_attempted": 18
   },
   "scope": {
     "roots": [

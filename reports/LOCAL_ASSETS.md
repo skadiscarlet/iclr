@@ -1,17 +1,17 @@
 # 本地未提交资产总览
 
-> 状态：已根据 `artifacts/local_asset_scan/r02/` 扫描、`metadata/r01_*` 与 X01–X08 填写。远程内容审阅未进行。`scan_complete=false`。
+> 状态：R02B 更新。远程内容审阅未进行。`full_workspace_scan_status=partial_by_design`。R02A 扫描细节不覆写，见 `reports/rounds/R02/LOCAL_ASSET_HANDOFF.md`。
 
 ## 1. 快照和覆盖范围
 
 | 字段 | 实际填写 |
 |---|---|
-| round / collection code SHA | R02A / `5a6cb24d4c5448194277ed924b31dd0c8b5339e6`（允许声明根 `data/` 符号链接按别名清点） |
-| experiment implementation SHA（可以不同） | `dcf80581b7d887a761d9acf484f6fef13a516d8c`（R01 fixture replay / registry 实现，未改） |
+| round / collection code SHA | R02B / `59301b66c98cdb960bc35550939d0c0fcecbefd7` |
+| experiment implementation SHA（可以不同） | `59301b66c98cdb960bc35550939d0c0fcecbefd7`（R02B fairness + frozen-pilot；R01 fixture 路径仍在） |
 | 采集时间（带时区） | 2026-09-17T13:10:18.604101+00:00 |
 | 资产工作区别名 / 交付工作区别名 | `primary_workspace` / `delivery_workspace`（同一工作树；无独立空 worktree） |
 | 扫描目录与明确排除范围 | roots: `data` `local_data` `artifacts` `.work` `metadata` `configs` `scripts` `src`。排除 `.git` `.venv` `venv` `node_modules` `__pycache__` 及提取器自身输出。声明根可以是目录符号链接，只通过 `data/` 别名走，**不把目标绝对路径写入输出**；嵌套符号链接仍不跟随。 |
-| 完整性 | **partial**。`data/` 已按别名清点：`declared_root_is_symlink=true`，提取器前缀 21896 文件（budget 为 `.work` 留位）；`find -H data -type f` 为 398686（`raw/` 为主）。`scripts/` 3 个 execute-only `PermissionError`。`listing_complete_within_declared_scope=false`。 |
+| 完整性 | **partial_by_design**。R02B 定点 catalog：300 条 complete。不重复全量 `.work` 扫描。execute-only 三个文件 `excluded_nonblocking`。 |
 | 扫描器版本/内容哈希 | collection_code_sha 如上；工具 `tools/local_asset_handoff.py` |
 | 原始扫描结果清单哈希 | `sha256:7e66924b7f052e8eb5ab54005c30d43dbf4d11063d839439f8403fb2dc1e3a7c`（file_inventory.jsonl；**不是**数据集内容哈希；该清单不提交） |
 | 人工核验与负责人远程读取状态 | `human_verified_pairs=0`；`content_not_remotely_reviewed`；`review_status=pending` |
@@ -32,7 +32,17 @@
 | A-EGSI-WORK-CACHE | EGSI 历史目录与 venv | files_observed=6879；约 777 MiB 扫描字节的主要来源 | unverified_legacy_result | 缓存/venv，gitignore `.work/` | summary_only | 不用于 SBS 主张 |
 | A-IGNORED-LOCAL-TOOLING | providers.local、lock、signer、locked launchers | 名称存在性；3 个不可读 | 非 SBS 输入 | 机器本地/密钥相邻 | summary_only | 不要提交或读取内容 |
 
-注意：file_count、record_count、pair_count、instance_count、project_name_count、independent_group_count 口径不同。catalog 记录数为本轮 **300**（完整 profile），不是 0，也不是 R01 的 24。
+注意：file_count、record_count、pair_count、instance_count、project_name_count、independent_group_count 口径不同。catalog 记录数为本轮 **300**（完整 profile），不是 0，也不是 R01 的 24。legacy `real_ready_pairs=2` 不得当作 `complete_version_pairs`。R02B `complete_version_pairs=4`（两侧 version-bound body 独立）。`independent_group_count=null`。
+
+### R02B 新增本地资产（不提交原文）
+
+| asset_id | 内容和用途 | 记录单位与真实规模 | 质量状态 | 为何未提交 | 远程可用证据 |
+|---|---|---|---|---|---|
+| A-R02B-CATALOG-PROBE | 根链接例外后的 catalog 探针输出 | 1 个 JSON；catalog_records=300 complete；24 unique_match | 计数/匹配状态；非语义核验 | artifacts gitignore | DATA_AUDIT counts + catalog_sha256 |
+| A-R02B-ACTOR | 8 个 opaque instance：case/evidence/manifest | 8 instance / 4 complete pairs；body 哈希互不相同 | version-bound；gold_assisted_context=true；logic 2 对 generic | 第三方源码摘录；`local_data/` | 计数与 instance_id 列表；无正文 |
+| A-R02B-EVAL | pairs.jsonl + HUMAN_REVIEW.md | 4 pair 行 | 管理端映射；禁止 actor 读取 | 含 pair 角色 | 仅存在性 |
+| A-R02B-RUNS | 冻结模型原响应与 ledger | 主 run 18 请求 + 重复 18 请求 | parse_error 18/18；fairness hashes 已记 | 完整模型输出 gitignore | run_index 摘要 |
+| A-R02B-MODEL | Qwen2.5-Coder-1.5B-Instruct snapshot `2e1fd397` | 1× safetensors 3087467144 bytes | 本地冻结；非最强模型 | 权重不入库 | lock.json revision + weight sha256 |
 
 ## 3. 重要资产详细卡
 
