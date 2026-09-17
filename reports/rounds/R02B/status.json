@@ -9,7 +9,7 @@
   "data_status": "partial",
   "model_run_status": "completed",
   "human_annotation_status": "not_checked",
-  "delivery_status": "not_pushed",
+  "delivery_status": "checkpoint_verified",
   "review_status": "pending",
   "g0_status": "passed",
   "catalog_profile_status": "complete",

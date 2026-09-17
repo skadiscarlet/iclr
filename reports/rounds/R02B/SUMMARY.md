@@ -6,7 +6,7 @@
 - 分支：`research/naacl2027-r02`
 - 已复核基线（祖先）：`26e86bccfa656e59b3e234fd3fd05e4c83e357ec`
 - Implementation SHA（A）：`59301b66c98cdb960bc35550939d0c0fcecbefd7`
-- engineering=completed；data=partial；model_run=completed；human_annotation=not_checked；delivery=not_pushed（B 提交前）；review=pending
+- engineering=completed；data=partial；model_run=completed；human_annotation=not_checked；delivery=checkpoint_verified（B 已推送并 ls-remote 核对）；review=pending
 - G0=passed。训练=not_started_by_design。新 CVE 发现=none_by_design。
 
 CLI 实际命令：`python -m sbs prepare-pilot` / `validate-pilot` / `run-pilot` / `validate-reports`。
@@ -49,4 +49,4 @@ CLI 实际命令：`python -m sbs prepare-pilot` / `validate-pilot` / `run-pilot
 
 ## Git交接
 
-A=`59301b66c98cdb960bc35550939d0c0fcecbefd7`。B/C 在推送后填写。R01/R02A 历史未覆写。
+A=`59301b66c98cdb960bc35550939d0c0fcecbefd7`。B=`f61a23419b796d5577a5b2cbcf1ac7c965d6505c`（已推送，远程 SHA 匹配）。C 回执不自引用自身 SHA。R01/R02A 历史未覆写。
