@@ -7,7 +7,7 @@
 - 已复核基线（祖先）：`26e86bccfa656e59b3e234fd3fd05e4c83e357ec`
 - Implementation SHA（当前代码，含稳定 ledger）：`5d3e468a029262cb2c25a734572b52db8242c14d`
 - 冻结模型运行所用 SHA：`59301b66c98cdb960bc35550939d0c0fcecbefd7`
-- engineering=completed；data=partial；model_run=completed；human_annotation=not_checked；delivery=not_pushed（本 B 待推送）；review=pending
+- engineering=completed；data=partial；model_run=completed；human_annotation=not_checked；delivery=checkpoint_verified；review=pending
 - G0=passed。训练=not_started_by_design。新 CVE 发现=none_by_design。
 
 CLI 实际命令：`python -m sbs prepare-pilot` / `validate-pilot` / `run-pilot` / `validate-reports`。
@@ -50,4 +50,4 @@ CLI 实际命令：`python -m sbs prepare-pilot` / `validate-pilot` / `run-pilot
 
 ## Git交接
 
-冻结运行 A=`59301b66c98cdb960bc35550939d0c0fcecbefd7`。稳定 ledger 实现=`5d3e468a029262cb2c25a734572b52db8242c14d`（`git ls-remote` 在本 B 之前已观察到该远程 SHA）。本 B 推送后填写新的 B SHA；C 回执只记录已观察到的远程 SHA，不自哈希。R01/R02A 历史未覆写。
+冻结运行 A=`59301b66c98cdb960bc35550939d0c0fcecbefd7`。稳定 ledger 实现=`5d3e468a029262cb2c25a734572b52db8242c14d`（B 之前 `git ls-remote` 已观察到）。B=`58301377eb85a6c41ecbc07e03342b381fecd605`（推送后远程 SHA 匹配）。C 回执只记录该已观察远程 SHA，不自哈希。R01/R02A 历史未覆写。
