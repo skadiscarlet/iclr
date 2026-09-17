@@ -1,0 +1,148 @@
+{
+  "schema_version": "1.0",
+  "round_id": "R02",
+  "inventory": {
+    "candidate_pairs": 24,
+    "real_ready_pairs": 2,
+    "human_verified_pairs": 0,
+    "project_families": 24,
+    "fixture_cases": 4,
+    "ready_pair_ids": [
+      "r01-pair-01",
+      "r01-pair-12"
+    ],
+    "actor_view_generated_ids": [
+      "r01-pair-01",
+      "r01-pair-12"
+    ],
+    "category_claim": {
+      "conventional": 12,
+      "logic_authorization_claim": 12
+    },
+    "split_dev_pilot": 24,
+    "duplicate_pair_ids": false,
+    "human_verified_count_fn": 0
+  },
+  "published_index_rows": 9,
+  "checks": [
+    {
+      "check_id": "X01",
+      "status": "partial",
+      "input_asset_ids": [
+        "A-R01-CANDIDATES",
+        "A-EGSI-T1-CATALOG"
+      ],
+      "command": "sbs.registry.load_candidates + data/catalog/cases.jsonl existence without follow",
+      "exit_code": 0,
+      "observed_fact": "registry_rows=24; unique_pair_ids=24; project_families=24; each row is a pair (buggy_revision+fixed_revision present); catalog_profile=symlink_not_followed; catalog_record_count=not_profiled_this_round",
+      "impact": "Catalog scale for this round is taken from tracked metadata, not a verified walk of data/.",
+      "next_action": "Keep scan_complete=false until a non-symlink catalog profile exists; do not treat catalog as empty.",
+      "artifact_hash": "sha256:e476fc8d906609698169bf3843c3302a31d24fb37095677e6b4bb338a8a06434"
+    },
+    {
+      "check_id": "X02",
+      "status": "passed",
+      "input_asset_ids": [
+        "A-R01-READINESS",
+        "A-R01-ACTOR-PACKS"
+      ],
+      "command": "ready=yes rows must have actor case.json + evidence body/json; no evaluator answer fields",
+      "exit_code": 0,
+      "observed_fact": "ready=2; actor_ok=2; missing_dirs=0; failed=0; ready_equals_actor_view_generated=True",
+      "impact": "Directory presence alone is not sufficient; body hashes and actor schema were checked.",
+      "next_action": "Keep evaluator answers out of actor roots; do not set human_verified.",
+      "artifact_hash": "sha256:ceb867782ad209b58681eed88ef328bacd882061a04a91497693785d6b444279"
+    },
+    {
+      "check_id": "X03",
+      "status": "passed",
+      "input_asset_ids": [
+        "A-R01-ACTOR-PACKS",
+        "A-R01-SMOKE"
+      ],
+      "command": "actor evidence generation_id + body sha vs fixture run_manifest mode",
+      "exit_code": 0,
+      "observed_fact": "actor_generation_ids=['r01-static-1']; answer_field_names_in_actor_evidence=0; smoke_manifest_mode=fixture_replay; smoke_manifest_is_fixture_replay_not_actor_run=True",
+      "impact": "Real actor packs are not the R01 smoke run; mixing them would invent a model run.",
+      "next_action": "Keep fixture replay and real actor packs as separate assets.",
+      "artifact_hash": "sha256:e2c1dd7b968f7bbc140602a88e5128b5f74d88346ccaa31bb5ccbfceb2a0e433"
+    },
+    {
+      "check_id": "X04",
+      "status": "passed",
+      "input_asset_ids": [
+        "A-R01-FIXTURES",
+        "A-R01-SMOKE"
+      ],
+      "command": "HistoryView/SBSView views_share_evidence + SBS material sha256 vs fixture .body",
+      "exit_code": 0,
+      "observed_fact": "fixture_cases=4; id_order_match=4; sbs_material_matches_fixture_body=9/9; history_events_with_material=0; missing_outputs=0",
+      "impact": "History JSON does not store observation material; ID-only History vs SBS is not the body check. Body identity is SBS material vs fixture files.",
+      "next_action": "Do not treat History/SBS ID equality as semantic proof of the security relation.",
+      "artifact_hash": "sha256:601199c087ebff2011d092f9bacce21f1a3e1449f49ba8e77d5c78190cc92dce"
+    },
+    {
+      "check_id": "X05",
+      "status": "passed",
+      "input_asset_ids": [
+        "A-R01-SMOKE",
+        "A-R01-FIXTURES"
+      ],
+      "command": "reports/rounds/R01/run_manifest.json vs artifacts/r01_smoke/run_manifest.json + recomputed hashes",
+      "exit_code": 0,
+      "observed_fact": "key_mismatches=[]; missing_outputs=0; config_hash_match=True; material_hash_match=True; model_calls=0; code_sha=dcf80581b7d887a761d9acf484f6fef13a516d8c",
+      "impact": "Fixture replay is not a real-model run. code_sha is experiment_implementation_sha, not this scanner commit.",
+      "next_action": "Do not retarget reports/latest.json; do not rerun replay for this supplement.",
+      "artifact_hash": "sha256:d9e24158c2e064b2a9fd476ebb0a8610a449b6a1e83dcb5741b21799bdc35ee7"
+    },
+    {
+      "check_id": "X06",
+      "status": "passed",
+      "input_asset_ids": [
+        "A-R01-CANDIDATES",
+        "A-R01-READINESS"
+      ],
+      "command": "sbs.registry.human_verified_count vs R01 status.json and published SUMMARY",
+      "exit_code": 0,
+      "observed_fact": "registry_human_verified=0; r01_status_human_verified=0; published_human_verified=0; no_human_record_observed=true",
+      "impact": "Zero is an observed automated-registry fact, not a human confirmation of labels.",
+      "next_action": "Do not set human_verified or review_status=accepted in this supplement.",
+      "artifact_hash": "sha256:9ef464b1a801725007215abd97e4b3a6fbdd6082379efab3f4f4cb6aa6dd6fd5"
+    },
+    {
+      "check_id": "X07",
+      "status": "passed",
+      "input_asset_ids": [
+        "A-R01-CANDIDATES",
+        "A-R01-READINESS",
+        "A-R01-FIXTURES"
+      ],
+      "command": "recompute via sbs.registry.count_inventory; compare R01 status.json and published SUMMARY",
+      "exit_code": 0,
+      "observed_fact": "recomputed={'candidate_pairs': 24, 'real_ready_pairs': 2, 'human_verified_pairs': 0, 'project_families': 24, 'fixture_cases': 4}; r01_status_counts={'candidate_pairs': 24, 'real_ready_pairs': 2, 'human_verified_pairs': 0, 'project_families': 24, 'fixture_cases': 4}; discrepancies=none; coverage_gap=catalog_record_count not independently profiled (data/ is symlink_not_followed)",
+      "impact": "Count mismatches vs reports/rounds/R01/ are listed, not patched. Catalog file is not a verified 0-record set.",
+      "next_action": "If a mismatch appears, keep R01 historical files and explain it in this round.",
+      "artifact_hash": "sha256:77f3bec9b4ec33f93a65c279f1d5436ef70d4ff048e032917cb45df6a7267eef"
+    },
+    {
+      "check_id": "X08",
+      "status": "partial",
+      "input_asset_ids": [
+        "A-R02A-SCANNER",
+        "A-R01-ACTOR-PACKS",
+        "A-IGNORED-LOCAL-TOOLING"
+      ],
+      "command": "existence of tracked builders vs ignored local lock/signer/provider files (names only)",
+      "exit_code": 0,
+      "observed_fact": "tracked_builders_present=['src/sbs/static_check.py', 'src/sbs/replay.py', 'src/sbs/views.py', 'tools/local_asset_handoff.py', 'tools/local_asset_xcheck.py', 'configs/r01_smoke.json']; ignored_local_present_count=6; data_symlink=True; actor_builder_tracked=True; r01_fixture_replay_does_not_need_providers_local=true",
+      "impact": "Real actor-view rebuild still depends on gitignored local_data and the unresolved data/ symlink cache. Fixture replay rebuilds from tracked fixtures + src/sbs.",
+      "next_action": "Do not commit providers.local.toml, lock files, signer records, or execute-only launchers.",
+      "artifact_hash": "sha256:6ed41625cbef7be0e9dd173944f6304f34546e533568643f898cd7ff91931a5d"
+    }
+  ],
+  "failed": [],
+  "partial": [
+    "X01",
+    "X08"
+  ]
+}
