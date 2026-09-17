@@ -49,4 +49,4 @@ CLI 实际命令：`python -m sbs prepare-pilot` / `validate-pilot` / `run-pilot
 
 ## Git交接
 
-A=`59301b66c98cdb960bc35550939d0c0fcecbefd7`。B=`f61a23419b796d5577a5b2cbcf1ac7c965d6505c`（已推送，远程 SHA 匹配）。C 回执不自引用自身 SHA。R01/R02A 历史未覆写。
+A=`59301b66c98cdb960bc35550939d0c0fcecbefd7`。B=`f61a23419b796d5577a5b2cbcf1ac7c965d6505c`（已推送，当时远程 SHA 匹配）。C 回执提交 `09c75fcf75fb8e487f1c6c40dfe8d3a9a415e710` 不自引用自身 SHA；随后修正 post-push 校验误把缺失字段当自哈希。最终远程 SHA 见交接。R01/R02A 历史未覆写。
