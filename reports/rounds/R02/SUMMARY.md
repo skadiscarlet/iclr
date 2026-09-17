@@ -13,9 +13,9 @@ R02 research (obligation annotation, frozen-model pilot, Q/V) is **not started**
 | Review evidence | `reports/local_assets/REVIEW_EVIDENCE.md` |
 | Round snapshot | `reports/rounds/R02/LOCAL_ASSET_HANDOFF.md` |
 | Checks | `reports/local_assets/checks.json` |
-| Collection code SHA | `e154e27dad197253b2594405a4c253bf857c2744` |
+| Collection code SHA | `5a6cb24d4c5448194277ed924b31dd0c8b5339e6` |
 | Experiment implementation SHA | `dcf80581b7d887a761d9acf484f6fef13a516d8c` |
-| Scan complete | false (`data/` symlink_not_followed; 3 execute-only scripts unreadable) |
+| Scan complete | false (`data/` walked via alias but file-budget prefix 21896/398686; 3 execute-only scripts unreadable) |
 | Raw data uploaded | no |
 | New model calls / training | none_by_design |
 | `reports/latest.json` | unchanged; `round_id=R01` |

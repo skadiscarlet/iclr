@@ -6,12 +6,12 @@
 
 | 字段 | 真实内容 |
 |---|---|
-| 支持的主张 | 跟踪的候选 registry 有 24 个不重复 pair 行，每行是一对而非单文件；catalog 文件本轮未 profile |
-| 输入资产及快照 | A-R01-CANDIDATES `sha256:ec6afbbf07a9cf39c5115bb0f28b27e4402b4afc642799534df6c6b37db1c9a6`；A-EGSI-T1-CATALOG profile=`symlink_not_followed` |
-| 运行命令/代码 SHA | `python -m sbs validate-registry --input metadata/r01_candidates.jsonl`；`tools/local_asset_xcheck.py`；collection `e154e27dad197253b2594405a4c253bf857c2744` |
-| 真实输出摘要 | X01 status=partial；`catalog_record_count=not_profiled_this_round` |
-| 原始本地输出哈希 | scan inventory `sha256:a5bbcb4abf5baee7ab299e595977b0e066a8e63fe38537224b8f205bb61a7619`（不是数据集内容哈希） |
-| 可以公开的最小材料 | 字段名列表与 pair 计数；不公开 catalog 行 |
+| 支持的主张 | 跟踪的候选 registry 有 24 个不重复 pair 行；`data/catalog/cases.jsonl` 经 `data/` 别名 profile 为 300 条 complete；24 是抽样 |
+| 输入资产及快照 | A-R01-CANDIDATES `sha256:ec6afbbf07a9cf39c5115bb0f28b27e4402b4afc642799534df6c6b37db1c9a6`；catalog profile complete scanned_records=300 |
+| 运行命令/代码 SHA | `profile_file(data/catalog/cases.jsonl)`；`tools/local_asset_xcheck.py`；collection `5a6cb24d4c5448194277ed924b31dd0c8b5339e6` |
+| 真实输出摘要 | catalog split train=200/dev=60/other=40；未导出行值；`data/` 提取器前缀 21896 / find -H 398686 |
+| 原始本地输出哈希 | scan inventory `sha256:7e66924b7f052e8eb5ab54005c30d43dbf4d11063d839439f8403fb2dc1e3a7c`（不是数据集内容哈希） |
+| 可以公开的最小材料 | schema/enum 计数与 pair 计数；不公开 catalog 行、不写符号链接目标路径 |
 | 证据不能证明什么 | 不能证明 24 行覆盖了整个上游 catalog，也不能证明类别主张语义正确 |
 | 真人或负责人核验 | pending / not_remotely_reviewed |
 
@@ -70,9 +70,9 @@
 
 | 字段 | 真实内容 |
 |---|---|
-| 支持的主张 | R01 fixture 回放重建入口都在 Git（`src/sbs/replay.py`、`configs/r01_smoke.json`、`fixtures/r01`）。真实 actor 包重建还依赖 gitignored `local_data/` 与未跟随的 `data/`。`providers.local.toml` 等忽略文件不是 R01 replay 依赖 |
+| 支持的主张 | R01 fixture 回放重建入口都在 Git（`src/sbs/replay.py`、`configs/r01_smoke.json`、`fixtures/r01`）。真实 actor 包重建还依赖 gitignored `local_data/` 与 `data/` 别名下的源码缓存。`providers.local.toml` 等忽略文件不是 R01 replay 依赖 |
 | 输入资产及快照 | A-R02A-SCANNER；A-IGNORED-LOCAL-TOOLING（名称存在，内容未读） |
-| 运行命令/代码 SHA | 路径存在性检查；collection SHA `e154e27dad197253b2594405a4c253bf857c2744` |
+| 运行命令/代码 SHA | 路径存在性检查；collection SHA `5a6cb24d4c5448194277ed924b31dd0c8b5339e6` |
 | 真实输出摘要 | X08 partial；ignored_local_present_count=6 |
 | 可以公开的最小材料 | 跟踪路径列表 |
 | 证据不能证明什么 | 不能证明忽略文件不含秘密；本轮故意不打开它们 |

@@ -27,17 +27,17 @@
   "checks": [
     {
       "check_id": "X01",
-      "status": "partial",
+      "status": "passed",
       "input_asset_ids": [
         "A-R01-CANDIDATES",
         "A-EGSI-T1-CATALOG"
       ],
-      "command": "sbs.registry.load_candidates + data/catalog/cases.jsonl existence without follow",
+      "command": "sbs.registry.load_candidates + profile_file(data/catalog/cases.jsonl) via declared-root alias",
       "exit_code": 0,
-      "observed_fact": "registry_rows=24; unique_pair_ids=24; project_families=24; each row is a pair (buggy_revision+fixed_revision present); catalog_profile=symlink_not_followed; catalog_record_count=not_profiled_this_round",
-      "impact": "Catalog scale for this round is taken from tracked metadata, not a verified walk of data/.",
-      "next_action": "Keep scan_complete=false until a non-symlink catalog profile exists; do not treat catalog as empty.",
-      "artifact_hash": "sha256:e476fc8d906609698169bf3843c3302a31d24fb37095677e6b4bb338a8a06434"
+      "observed_fact": "registry_rows=24; unique_pair_ids=24; project_families=24; each row is a pair (buggy_revision+fixed_revision present); catalog_profile=complete; catalog_scanned_records=300; catalog_complete=True; declared_data_root_is_symlink=True",
+      "impact": "Catalog is inventoried through the data/ alias; registry 24 is a sampled subset unless counts match.",
+      "next_action": "Publish schema/enum counts only; do not upload catalog rows or the symlink target path.",
+      "artifact_hash": "sha256:879834a1f8ff6b33e2a919c49500b5da2d4af72ca7d0d256bb57e03d2bce1d35"
     },
     {
       "check_id": "X02",
@@ -119,10 +119,10 @@
       ],
       "command": "recompute via sbs.registry.count_inventory; compare R01 status.json and published SUMMARY",
       "exit_code": 0,
-      "observed_fact": "recomputed={'candidate_pairs': 24, 'real_ready_pairs': 2, 'human_verified_pairs': 0, 'project_families': 24, 'fixture_cases': 4}; r01_status_counts={'candidate_pairs': 24, 'real_ready_pairs': 2, 'human_verified_pairs': 0, 'project_families': 24, 'fixture_cases': 4}; discrepancies=none; coverage_gap=catalog_record_count not independently profiled (data/ is symlink_not_followed)",
+      "observed_fact": "recomputed={'candidate_pairs': 24, 'real_ready_pairs': 2, 'human_verified_pairs': 0, 'project_families': 24, 'fixture_cases': 4}; r01_status_counts={'candidate_pairs': 24, 'real_ready_pairs': 2, 'human_verified_pairs': 0, 'project_families': 24, 'fixture_cases': 4}; discrepancies=none; coverage_gap=catalog_records=300 complete via data/ alias; R01 registry 24 is a sampled subset",
       "impact": "Count mismatches vs reports/rounds/R01/ are listed, not patched. Catalog file is not a verified 0-record set.",
       "next_action": "If a mismatch appears, keep R01 historical files and explain it in this round.",
-      "artifact_hash": "sha256:77f3bec9b4ec33f93a65c279f1d5436ef70d4ff048e032917cb45df6a7267eef"
+      "artifact_hash": "sha256:f7724dc02f5aaa3b5f7e43a0a9c68ffd15cba48286da2a036aca89ab48511ed2"
     },
     {
       "check_id": "X08",
@@ -142,7 +142,6 @@
   ],
   "failed": [],
   "partial": [
-    "X01",
     "X08"
   ]
 }

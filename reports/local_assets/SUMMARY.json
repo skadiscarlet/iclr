@@ -2,21 +2,21 @@
   "document_kind": "local_asset_summary",
   "schema_version": "1.0",
   "round_id": "R02",
-  "collection_code_sha": "e154e27dad197253b2594405a4c253bf857c2744",
+  "collection_code_sha": "5a6cb24d4c5448194277ed924b31dd0c8b5339e6",
   "experiment_implementation_sha": "dcf80581b7d887a761d9acf484f6fef13a516d8c",
-  "snapshot_id": "r02a-local-assets-e154e27",
+  "snapshot_id": "r02a-local-assets-5a6cb24",
   "workspace_alias": "primary_workspace",
   "delivery_workspace_alias": "delivery_workspace",
   "same_worktree": true,
   "branch": "research/naacl2027-r02",
-  "collected_at": "2026-09-17T06:20:10.285289+00:00",
+  "collected_at": "2026-09-17T13:10:18.604101+00:00",
   "scan_status": "partial",
   "scan_complete": false,
-  "scan_complete_reason": "data/ is symlink_not_followed; three execute-only scripts under scripts/ raised PermissionError; listing_complete_within_declared_scope=false",
+  "scan_complete_reason": "data/ declared-root symlink was walked via the repo alias; extractor listed 21896 of find -H data -type f count 398686 (raw-dominated) after file-budget reserve for .work; three execute-only scripts PermissionError; listing_complete_within_declared_scope=false",
   "publication_status": "local_review_required",
   "asset_group_count": 9,
-  "counts_source": "sbs.registry.count_inventory on metadata/r01_candidates.jsonl and metadata/r01_readiness.csv plus fixtures/r01 directory names; scan file totals from artifacts/local_asset_scan/r02/scan_summary.json (not committed)",
-  "raw_inventory_digest": "sha256:a5bbcb4abf5baee7ab299e595977b0e066a8e63fe38537224b8f205bb61a7619",
+  "counts_source": "sbs.registry.count_inventory on metadata/r01_candidates.jsonl and metadata/r01_readiness.csv plus fixtures/r01 directory names; catalog records from profile_file(data/catalog/cases.jsonl); scan file totals from artifacts/local_asset_scan/r02/scan_summary.json; data_tree_file_count from find -H data -type f (not a content hash)",
+  "raw_inventory_digest": "sha256:7e66924b7f052e8eb5ab54005c30d43dbf4d11063d839439f8403fb2dc1e3a7c",
   "inventory_hash_is_not_a_dataset_content_hash": true,
   "counts": {
     "candidate_pairs": 24,
@@ -24,20 +24,26 @@
     "human_verified_pairs": 0,
     "project_families": 24,
     "fixture_cases": 4,
-    "scan_files_observed": 6983,
-    "scan_observed_file_bytes": 776721484,
+    "scan_files_observed": 28879,
+    "scan_observed_file_bytes": 1906941823,
     "local_data_files_observed": 8,
     "artifacts_r01_smoke_files_observed": 13,
     "work_files_observed": 6879,
     "complete": false,
-    "count_basis": "registry/readiness/fixture counts from tracked files via sbs.registry; scan_files_observed is the extractor file listing within declared roots, not a catalog record count"
+    "count_basis": "registry/readiness/fixture via sbs.registry; catalog_records=300 complete profile of data/catalog/cases.jsonl; data_files_observed_extractor_prefix is a budget-limited walk through the data/ alias, not the full tree; data_files_find_H is find -H data -type f",
+    "data_files_observed_extractor_prefix": 21896,
+    "data_files_find_H": 398686,
+    "catalog_records": 300,
+    "catalog_complete": true
   },
   "scope": {
     "roots": [
       {
         "root": "data",
-        "status": "symlink_not_followed",
-        "files_observed": null
+        "status": "partial_file_budget",
+        "files_observed": 21896,
+        "declared_root_is_symlink": true,
+        "symlink_target_path_omitted": true
       },
       {
         "root": "local_data",
@@ -87,7 +93,7 @@
       "extractor_own_output"
     ],
     "unresolved_locations": [
-      "data (symlink_not_followed; catalog profile not a verified empty set)"
+      "data/raw remainder after extractor prefix (find -H total 398686 vs extractor 21896)"
     ]
   },
   "publication_review": {
@@ -100,17 +106,17 @@
   "checks": [
     {
       "check_id": "X01",
-      "status": "partial",
+      "status": "passed",
       "input_asset_ids": [
         "A-R01-CANDIDATES",
         "A-EGSI-T1-CATALOG"
       ],
-      "command": "sbs.registry.load_candidates + data/catalog/cases.jsonl existence without follow",
+      "command": "sbs.registry.load_candidates + profile_file(data/catalog/cases.jsonl) via declared-root alias",
       "exit_code": 0,
-      "observed_fact": "registry_rows=24; unique_pair_ids=24; project_families=24; each row is a pair (buggy_revision+fixed_revision present); catalog_profile=symlink_not_followed; catalog_record_count=not_profiled_this_round",
-      "impact": "Catalog scale for this round is taken from tracked metadata, not a verified walk of data/.",
-      "next_action": "Keep scan_complete=false until a non-symlink catalog profile exists; do not treat catalog as empty.",
-      "artifact_hash": "sha256:e476fc8d906609698169bf3843c3302a31d24fb37095677e6b4bb338a8a06434"
+      "observed_fact": "registry_rows=24; unique_pair_ids=24; project_families=24; each row is a pair (buggy_revision+fixed_revision present); catalog_profile=complete; catalog_scanned_records=300; catalog_complete=True; declared_data_root_is_symlink=True",
+      "impact": "Catalog is inventoried through the data/ alias; registry 24 is a sampled subset unless counts match.",
+      "next_action": "Publish schema/enum counts only; do not upload catalog rows or the symlink target path.",
+      "artifact_hash": "sha256:879834a1f8ff6b33e2a919c49500b5da2d4af72ca7d0d256bb57e03d2bce1d35"
     },
     {
       "check_id": "X02",
@@ -177,10 +183,10 @@
       ],
       "command": "sbs.registry.human_verified_count vs R01 status.json and published SUMMARY",
       "exit_code": 0,
-      "observed_fact": "registry_human_verified=0; r01_status_human_verified=0; published_human_verified=None; no_human_record_observed=true",
+      "observed_fact": "registry_human_verified=0; r01_status_human_verified=0; published_human_verified=0; no_human_record_observed=true",
       "impact": "Zero is an observed automated-registry fact, not a human confirmation of labels.",
       "next_action": "Do not set human_verified or review_status=accepted in this supplement.",
-      "artifact_hash": "sha256:00c15b789e142f5634d72fe46a3b88d8c2c75a02546c80f45220cdf5b4b7445a"
+      "artifact_hash": "sha256:9ef464b1a801725007215abd97e4b3a6fbdd6082379efab3f4f4cb6aa6dd6fd5"
     },
     {
       "check_id": "X07",
@@ -192,10 +198,10 @@
       ],
       "command": "recompute via sbs.registry.count_inventory; compare R01 status.json and published SUMMARY",
       "exit_code": 0,
-      "observed_fact": "recomputed={'candidate_pairs': 24, 'real_ready_pairs': 2, 'human_verified_pairs': 0, 'project_families': 24, 'fixture_cases': 4}; r01_status_counts={'candidate_pairs': 24, 'real_ready_pairs': 2, 'human_verified_pairs': 0, 'project_families': 24, 'fixture_cases': 4}; discrepancies=none; coverage_gap=catalog_record_count not independently profiled (data/ is symlink_not_followed)",
+      "observed_fact": "recomputed={'candidate_pairs': 24, 'real_ready_pairs': 2, 'human_verified_pairs': 0, 'project_families': 24, 'fixture_cases': 4}; r01_status_counts={'candidate_pairs': 24, 'real_ready_pairs': 2, 'human_verified_pairs': 0, 'project_families': 24, 'fixture_cases': 4}; discrepancies=none; coverage_gap=catalog_records=300 complete via data/ alias; R01 registry 24 is a sampled subset",
       "impact": "Count mismatches vs reports/rounds/R01/ are listed, not patched. Catalog file is not a verified 0-record set.",
       "next_action": "If a mismatch appears, keep R01 historical files and explain it in this round.",
-      "artifact_hash": "sha256:77f3bec9b4ec33f93a65c279f1d5436ef70d4ff048e032917cb45df6a7267eef"
+      "artifact_hash": "sha256:f7724dc02f5aaa3b5f7e43a0a9c68ffd15cba48286da2a036aca89ab48511ed2"
     },
     {
       "check_id": "X08",
@@ -220,9 +226,9 @@
       "detail": "candidate_pairs=24, real_ready_pairs=2, human_verified_pairs=0, project_families=24, fixture_cases=4"
     },
     {
-      "claim": "data/catalog/cases.jsonl record count",
-      "status": "not_independently_profiled",
-      "detail": "Extractor profile status=symlink_not_followed, scanned_records=null. R01 reported dataset_revision sha256:295bc9751161b4d04af1920bb464d94eb6369790936496394306bb60a7019455; this round did not re-hash the catalog file and does not treat it as a 0-record dataset."
+      "claim": "data/catalog/cases.jsonl record count vs R01 registry",
+      "status": "catalog_larger_than_registry",
+      "detail": "profile_file complete scanned_records=300 (split train=200, dev=60, other=40). R01 registry has 24 pair rows. 24 is a sampled subset, not the full catalog."
     },
     {
       "claim": "scripts/ files_observed vs inventory rows",
@@ -231,7 +237,7 @@
     }
   ],
   "blockers": [
-    "Catalog behind data/ symlink was not walked; scan_complete=false",
+    "data/ tree is larger than the extractor file budget; raw/ dominates find -H count 398686",
     "No human_verified records; remote content review not performed",
     "plans/rounds/R02.md is absent; this supplement does not start R02 research"
   ],
