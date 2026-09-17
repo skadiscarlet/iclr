@@ -170,7 +170,9 @@ def validate_r02b_reports(repo: Path, phase: str) -> dict[str, Any]:
         receipt_payload = _load_json(receipt)
         if receipt_payload.get("remote_sha_match") not in {"yes", "no", "not_verified"}:
             raise ValueError("push_receipt.remote_sha_match invalid")
-        if receipt_payload.get("receipt_sha") == receipt_payload.get("final_pushed_sha"):
+        receipt_sha = receipt_payload.get("receipt_sha")
+        final_sha = receipt_payload.get("final_pushed_sha")
+        if receipt_sha and final_sha and receipt_sha == final_sha:
             raise ValueError("push_receipt must not self-hash C")
     return {
         "valid": True,
