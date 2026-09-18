@@ -9,7 +9,7 @@
   "data_status": "partial",
   "model_run_status": "completed",
   "human_annotation_status": "not_checked",
-  "delivery_status": "not_pushed",
+  "delivery_status": "completed",
   "review_status": "pending",
   "training_status": "not_started_by_design",
   "qv_training_status": "not_started_by_design",

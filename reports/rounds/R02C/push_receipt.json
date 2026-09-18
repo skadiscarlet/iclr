@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0",
+  "task_id": "R02C",
+  "document_kind": "push_receipt_C_records_observed_B",
+  "observed_b_sha": "eabe99f3c965867fd965cbedcffe0dcd1fcab51f",
+  "final_pushed_sha": "eabe99f3c965867fd965cbedcffe0dcd1fcab51f",
+  "remote_ref": "refs/heads/research/naacl2027-r02",
+  "remote_sha_match": "yes",
+  "ls_remote_command": "git ls-remote origin refs/heads/research/naacl2027-r02",
+  "ls_remote_observed_at": "2026-09-18T04:56:02Z",
+  "implementation_sha": "4243137c57b2bee6db26662893a89e6e71b0c18f",
+  "reviewed_base": "148f59948200bfe5d25a30c8c5115f613dc4f9fb",
+  "receipt_sha": null,
+  "notes": "C records the already-observed B SHA. This receipt does not claim its own commit as B."
+}

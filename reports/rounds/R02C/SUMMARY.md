@@ -7,9 +7,9 @@
 - 已复核基线（祖先）：`148f59948200bfe5d25a30c8c5115f613dc4f9fb`
 - 冻结运行所用实现 SHA：`4243137c57b2bee6db26662893a89e6e71b0c18f`
 - 更早实现提交：`c254c6f4a582b545a8af8506557f50c1a9cff266`（契约/诊断）、`8b392fdb0054bd1989f7d00fd608e0484f9d083f`（chat-template mapping 计数）
-- 报告 SHA：见后续 B 提交（本文件写入时尚未推送）
+- 报告 SHA（B，已观察远程）：`eabe99f3c965867fd965cbedcffe0dcd1fcab51f`
 - UTC 运行结束：`2026-09-18T04:49:52+00:00`
-- engineering=completed；data=partial；model_run=completed；human_annotation=not_checked；delivery=not_pushed（pre-push）；review=pending
+- engineering=completed；data=partial；model_run=completed；human_annotation=not_checked；delivery=completed（远程 SHA 匹配 B）；review=pending
 - 训练=not_started_by_design。新 CVE 发现=none_by_design。语义分数/reward/QV=null。
 
 CLI 实际名称：`python -m sbs diagnose-output|prepare-pilot|validate-pilot|run-pilot|validate-reports`，`--task R02C`。
@@ -23,7 +23,7 @@ CLI 实际名称：`python -m sbs diagnose-output|prepare-pilot|validate-pilot|r
 | C02 | completed | 三类契约、SBS 原子卡、E0 硬门、runtime 不读 evaluator；C-T01–C-T18 假模型通过 |
 | C03 | completed | 8 实例与原 blob 切片一致；两张逻辑卡 `concrete_unreviewed`；HUMAN_CHECK 两个问题 |
 | C04 | completed | 锁定同一 Qwen 1.5B revision；E0 6 案；1/6 schema 合格；E1 generate=0 |
-| C05 | running | 本报告；推送前 delivery 不得 completed |
+| C05 | completed | B=`eabe99f3c965867fd965cbedcffe0dcd1fcab51f` 已推送且 ls-remote 匹配；回执 C 只记录该 B |
 
 ## 旧失败到底是什么
 
@@ -50,3 +50,7 @@ CLI 实际名称：`python -m sbs diagnose-output|prepare-pilot|validate-pilot|r
 ## 边界
 
 真实样本 raw 未远程审阅。E1 未跑，没有真实 SBS 卡片链。单证据接口先导即使将来 E1 通过也不能证明证据选择学习。小模型未过 E0 六案门槛。
+
+## Git交接
+
+实现运行 SHA A=`4243137c57b2bee6db26662893a89e6e71b0c18f`。报告 B=`eabe99f3c965867fd965cbedcffe0dcd1fcab51f`（`git ls-remote origin refs/heads/research/naacl2027-r02` 已观察匹配）。回执 C 只记录该已观察 B，不自哈希。R02B raw 未覆写。review=pending。
