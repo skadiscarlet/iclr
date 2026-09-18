@@ -1,0 +1,20 @@
+```json
+{
+  "entities": [
+    {
+      "name": "AuthoredIdentity",
+      "type": "class"
+    },
+    {
+      "name": "delegate",
+      "type": "method"
+    }
+  ],
+  "requirement": "The function identity(x) must return x unchanged.",
+  "hypothesis_to_evaluate": null,
+  "support_refs": [],
+  "counter_refs": [],
+  "unknowns": [],
+  "limitations": []
+}
+```

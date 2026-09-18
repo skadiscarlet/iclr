@@ -1,0 +1,24 @@
+branch=research/naacl2027-r02
+HEAD=148f59948200bfe5d25a30c8c5115f613dc4f9fb
+ancestor_check=ok
+origin_fetch=ssh://git@ssh.github.com:443/skadiscarlet/iclr.git
+origin_desensitized=skadiscarlet/iclr
+ M PACKAGE_SHA256SUMS.txt
+ M README_IMPORT.md
+ M plans/CURRENT_TASK.json
+ M validation/README.md
+ M validation/result.json
+?? ASSISTANT_PARSER_TESTS.log
+?? PACKAGE_MANIFEST.json
+?? README_START_HERE.md
+?? configs/r02c_pilot.template.json
+?? fixtures/r02c_e0/
+?? plans/rounds/R02C.md
+?? reviews/R02B_148f5994.md
+?? schemas/r02c_final.schema.json
+?? schemas/r02c_history_note.schema.json
+?? schemas/r02c_sbs_note.schema.json
+?? src/sbs/output_contract.py
+?? templates/r02c/
+?? tests/r02c_contract/
+?? validation/catalog_probe_selftest.log

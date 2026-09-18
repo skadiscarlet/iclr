@@ -1,0 +1,43 @@
+{
+  "schema_version": "2.0",
+  "task_id": "R02C",
+  "parent_round": "R02",
+  "reviewed_base_sha": "148f59948200bfe5d25a30c8c5115f613dc4f9fb",
+  "implementation_sha": "4243137c57b2bee6db26662893a89e6e71b0c18f",
+  "model_run_implementation_sha": "4243137c57b2bee6db26662893a89e6e71b0c18f",
+  "engineering_status": "completed",
+  "data_status": "partial",
+  "model_run_status": "completed",
+  "human_annotation_status": "not_checked",
+  "delivery_status": "not_pushed",
+  "review_status": "pending",
+  "training_status": "not_started_by_design",
+  "qv_training_status": "not_started_by_design",
+  "counts": {
+    "legacy_reported_requests": 38,
+    "legacy_observed_requests": 38,
+    "legacy_reconciled_conservative": 38,
+    "new_reservations": 24,
+    "actual_new_generate_attempts": 24,
+    "generate_attempts_with_text": 12,
+    "schema_reprompts": 10,
+    "cache_hits": 0,
+    "e0_valid_first_attempt": 1,
+    "e0_valid_after_reprompt": 1,
+    "e1_scheduled_episodes": 4,
+    "e1_attempted_episodes": 0,
+    "e1_valid_final_episodes": 0,
+    "real_state_updates": 0,
+    "concrete_unreviewed_logic_cards": 2,
+    "generic_or_missing_logic_cards": 0,
+    "human_confirmed_pairs": 0
+  },
+  "semantic_metrics": null,
+  "reward": null,
+  "e1_gate": "e0_schema_or_refs_failed",
+  "blockers": [
+    "locked 1.5B model failed 5/6 E0 contracts after one schema_reprompt; E1 not opened",
+    "pair-13 getItem truncated; pair-15 mount loop is not a complete method",
+    "human_verified remains false"
+  ]
+}

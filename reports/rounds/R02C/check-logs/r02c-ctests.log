@@ -1,0 +1,101 @@
+test_all_legal_verdicts (test_output_contract.OutputContractTests.test_all_legal_verdicts) ... ok
+test_bare_final (test_output_contract.OutputContractTests.test_bare_final) ... ok
+test_binding_checks_unobserved_id (test_output_contract.OutputContractTests.test_binding_checks_unobserved_id) ... ok
+test_boolean_never_relabelled (test_output_contract.OutputContractTests.test_boolean_never_relabelled) ... ok
+test_case_sensitive_enum (test_output_contract.OutputContractTests.test_case_sensitive_enum) ... ok
+test_crlf_fence (test_output_contract.OutputContractTests.test_crlf_fence) ... ok
+test_duplicate_key_rejected (test_output_contract.OutputContractTests.test_duplicate_key_rejected) ... ok
+test_duplicate_reference (test_output_contract.OutputContractTests.test_duplicate_reference) ... ok
+test_empty_hypothesis (test_output_contract.OutputContractTests.test_empty_hypothesis) ... ok
+test_extra_field_rejected (test_output_contract.OutputContractTests.test_extra_field_rejected) ... ok
+test_history_no_extra_verdict (test_output_contract.OutputContractTests.test_history_no_extra_verdict) ... ok
+test_history_note (test_output_contract.OutputContractTests.test_history_note) ... ok
+test_inf_rejected (test_output_contract.OutputContractTests.test_inf_rejected) ... ok
+test_json_fence (test_output_contract.OutputContractTests.test_json_fence) ... ok
+test_missing_array_not_defaulted (test_output_contract.OutputContractTests.test_missing_array_not_defaulted) ... ok
+test_nan_rejected (test_output_contract.OutputContractTests.test_nan_rejected) ... ok
+test_null_rejected (test_output_contract.OutputContractTests.test_null_rejected) ... ok
+test_numeric_verdict_rejected (test_output_contract.OutputContractTests.test_numeric_verdict_rejected) ... ok
+test_plain_fence (test_output_contract.OutputContractTests.test_plain_fence) ... ok
+test_prose_prefix_rejected (test_output_contract.OutputContractTests.test_prose_prefix_rejected) ... ok
+test_prose_suffix_rejected (test_output_contract.OutputContractTests.test_prose_suffix_rejected) ... ok
+test_public_summary_has_no_prose (test_output_contract.OutputContractTests.test_public_summary_has_no_prose) ... ok
+test_python_fence_rejected (test_output_contract.OutputContractTests.test_python_fence_rejected) ... ok
+test_raw_hash_stable_across_parsers (test_output_contract.OutputContractTests.test_raw_hash_stable_across_parsers) ... ok
+test_raw_size_limit (test_output_contract.OutputContractTests.test_raw_size_limit) ... ok
+test_refs_dict_not_coerced (test_output_contract.OutputContractTests.test_refs_dict_not_coerced) ... ok
+test_refs_mixed_types (test_output_contract.OutputContractTests.test_refs_mixed_types) ... ok
+test_refs_string_not_list (test_output_contract.OutputContractTests.test_refs_string_not_list) ... ok
+test_sbs_entities_type (test_output_contract.OutputContractTests.test_sbs_entities_type) ... ok
+test_sbs_missing_requirements (test_output_contract.OutputContractTests.test_sbs_missing_requirements) ... ok
+test_sbs_note (test_output_contract.OutputContractTests.test_sbs_note) ... ok
+test_sbs_note_has_no_forced_verdict (test_output_contract.OutputContractTests.test_sbs_note_has_no_forced_verdict) ... ok
+test_schema_is_not_support_sufficiency (test_output_contract.OutputContractTests.test_schema_is_not_support_sufficiency) ... ok
+test_single_line_fence_rejected (test_output_contract.OutputContractTests.test_single_line_fence_rejected) ... ok
+test_top_array_rejected (test_output_contract.OutputContractTests.test_top_array_rejected) ... ok
+test_true_string_never_relabelled (test_output_contract.OutputContractTests.test_true_string_never_relabelled) ... ok
+test_truncation_not_completed (test_output_contract.OutputContractTests.test_truncation_not_completed) ... ok
+test_two_fences_rejected (test_output_contract.OutputContractTests.test_two_fences_rejected) ... ok
+test_two_objects_rejected (test_output_contract.OutputContractTests.test_two_objects_rejected) ... ok
+test_unicode_content_preserved (test_output_contract.OutputContractTests.test_unicode_content_preserved) ... ok
+test_unknown_contract_fails (test_output_contract.OutputContractTests.test_unknown_contract_fails) ... ok
+test_whitespace_only_normalization (test_output_contract.OutputContractTests.test_whitespace_only_normalization) ... ok
+test_wrong_raw_type_fails (test_output_contract.OutputContractTests.test_wrong_raw_type_fails) ... ok
+
+----------------------------------------------------------------------
+Ran 43 tests in 0.002s
+
+OK
+============================= test session starts ==============================
+platform linux -- Python 3.12.9, pytest-9.0.3, pluggy-1.6.0 -- /home/furina/.pyenv/versions/3.12.9/bin/python
+cachedir: .pytest_cache
+rootdir: /home/furina/iclr
+configfile: pyproject.toml
+plugins: anyio-4.14.2, cov-7.1.0, respx-0.23.1
+collecting ... collected 43 items
+
+tests/sbs/test_r02c.py::test_ct02_layered_reject_no_repair PASSED        [  2%]
+tests/sbs/test_r02c.py::test_ct03_three_stage_prompts_differ_then_share_final PASSED [  4%]
+tests/sbs/test_r02c.py::test_ct04_second_sbs_prompt_contains_new_card PASSED [  6%]
+tests/sbs/test_r02c.py::test_ct05_empty_unknowns_clears_and_keeps_raw PASSED [  9%]
+tests/sbs/test_r02c.py::test_ct06_bad_ref_aborts_whole_update PASSED     [ 11%]
+tests/sbs/test_r02c.py::test_ct07_second_evidence_keeps_its_own_span PASSED [ 13%]
+tests/sbs/test_r02c.py::test_ct08_valid_finals_and_null_model_decision PASSED [ 16%]
+tests/sbs/test_r02c.py::test_ct09_validation_failure_does_not_load_model PASSED [ 18%]
+tests/sbs/test_r02c.py::test_ct10_e0_fail_means_zero_e1_generate PASSED  [ 20%]
+tests/sbs/test_r02c.py::test_ct11_evaluator_tripwire_runtime_still_runs PASSED [ 23%]
+tests/sbs/test_r02c.py::test_ct12_chat_template_over_budget_intercepted PASSED [ 25%]
+tests/sbs/test_r02c.py::test_ct13_one_char_visible_body_change_fails_cross_check PASSED [ 27%]
+tests/sbs/test_r02c.py::test_ct14_form_sees_code_no_duplicate_observation PASSED [ 30%]
+tests/sbs/test_r02c.py::test_ct15_one_schema_reprompt_then_stop PASSED   [ 32%]
+tests/sbs/test_r02c.py::test_ct16_two_run_entries_ledger_delta_and_post_round_reject PASSED [ 34%]
+tests/sbs/test_r02c.py::test_ct17_generation_mismatch_is_not_a_cache_hit PASSED [ 37%]
+tests/sbs/test_r02c.py::test_ct18_exception_still_persists_raw PASSED    [ 39%]
+tests/sbs/test_g0.py::test_g01_history_without_material_fails_fairness PASSED [ 41%]
+tests/sbs/test_g0.py::test_g02_body_or_span_change_fails_fairness PASSED [ 44%]
+tests/sbs/test_g0.py::test_g03_unequal_final_prompt_truncation_fails_before_send PASSED [ 46%]
+tests/sbs/test_g0.py::test_g04_unread_allowed_ref_is_atomic_reject PASSED [ 48%]
+tests/sbs/test_g0.py::test_g05_wrong_instance_generation_or_replaced_body_rejected PASSED [ 51%]
+tests/sbs/test_g0.py::test_g06_missing_unparseable_or_budget_is_not_target_refuted PASSED [ 53%]
+tests/sbs/test_g0.py::test_g07_real_model_entry_rejects_fixture_script_and_canary PASSED [ 55%]
+tests/sbs/test_g0.py::test_g08_same_case_name_different_versions_do_not_share_cache_keys PASSED [ 58%]
+tests/sbs/test_g0.py::test_g09_illegal_model_json_is_stored_raw_and_failed PASSED [ 60%]
+tests/sbs/test_g0.py::test_g10_one_version_ready_does_not_increment_complete_pairs PASSED [ 62%]
+tests/sbs/test_g0.py::test_g11_different_notes_same_public_evidence_allowed PASSED [ 65%]
+tests/sbs/test_g0.py::test_g12_restart_does_not_drop_failures_or_reset_budget PASSED [ 67%]
+tests/sbs/test_g0.py::test_r01_fixture_replay_still_zero_calls PASSED    [ 69%]
+tests/sbs/test_g0.py::test_actor_store_rejects_wrong_instance PASSED     [ 72%]
+tests/sbs/test_cli.py::test_cli_lists_required_commands PASSED           [ 74%]
+tests/sbs/test_cli.py::test_doctor_writes_inventory PASSED               [ 76%]
+tests/sbs/test_cli.py::test_validate_registry_cli PASSED                 [ 79%]
+tests/sbs/test_cli.py::test_replay_cli_writes_history_and_sbs PASSED     [ 81%]
+tests/sbs/test_replay.py::test_smoke_config_matches_r01_contract PASSED  [ 83%]
+tests/sbs/test_replay.py::test_support_finishes_supported PASSED         [ 86%]
+tests/sbs/test_replay.py::test_counter_evidence_revises_state PASSED     [ 88%]
+tests/sbs/test_replay.py::test_insufficient_material_unresolved PASSED   [ 90%]
+tests/sbs/test_replay.py::test_budget_exhaustion_unresolved_not_refuted_or_safe PASSED [ 93%]
+tests/sbs/test_replay.py::test_history_and_sbs_share_evidence_set_and_order PASSED [ 95%]
+tests/sbs/test_replay.py::test_replay_semantic_outputs_stable_across_runs PASSED [ 97%]
+tests/sbs/test_replay.py::test_value_scorer_unavailable PASSED           [100%]
+
+============================= 43 passed in 11.61s ==============================

@@ -1,0 +1,7 @@
+```json
+{
+  "supported": ["The implementation of identity may violate the declared identity requirement"],
+  "refuted": [],
+  "unresolved": []
+}
+```

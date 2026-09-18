@@ -1,6 +1,6 @@
 # 本地未提交资产总览
 
-> 状态：R02B 更新。远程内容审阅未进行。`full_workspace_scan_status=partial_by_design`。R02A 扫描细节不覆写，见 `reports/rounds/R02/LOCAL_ASSET_HANDOFF.md`。
+> 状态：R02C 更新。远程内容审阅未进行。`full_workspace_scan_status=partial_by_design`。R02B/R02A 扫描细节不覆写，见 `reports/rounds/R02B/LOCAL_ASSET_HANDOFF.md` 与 `reports/rounds/R02/LOCAL_ASSET_HANDOFF.md`。
 
 ## 1. 快照和覆盖范围
 
@@ -43,6 +43,15 @@
 | A-R02B-EVAL | pairs.jsonl + HUMAN_REVIEW.md | 4 pair 行 | 管理端映射；禁止 actor 读取 | 含 pair 角色 | 仅存在性 |
 | A-R02B-RUNS | 冻结模型原响应与 ledger | 主 run 18 请求 + 重复 18 请求 | parse_error 18/18；fairness hashes 已记 | 完整模型输出 gitignore | run_index 摘要 |
 | A-R02B-MODEL | Qwen2.5-Coder-1.5B-Instruct snapshot `2e1fd397` | 1× safetensors 3087467144 bytes | 本地冻结；非最强模型 | 权重不入库 | lock.json revision + weight sha256 |
+
+### R02C 新增本地资产（不提交原文）
+
+| asset_id | 内容和用途 | 记录单位与真实规模 | 质量状态 | 为何未提交 | 远程可用证据 |
+|---|---|---|---|---|---|
+| A-R02C-ACTOR | 8 个 r02c-g1 副本，runtime 清单仅 pair-01 两实例 | 8 instance copy / runtime 2 | version-bound；gold_assisted | 第三方摘录；`local_data/` | actor_manifest sha256；无正文 |
+| A-R02C-EVAL-CARDS | 两张逻辑要求卡全文 | 2 json + 2 md | concrete_unreviewed；human_verified=false | 含源码释义 | HUMAN_CHECK 签名级摘录 |
+| A-R02C-RUNS | 冻结模型 raw 与 ledger | 新预约 24；协议 E0 11 次有正文 | E0 1/6 schema；E1=0 | 完整模型输出 gitignore | run_index + e0_public 自建输出 |
+| A-R02C-MODEL | 同一 Qwen 1.5B snapshot | 复用 A-R02B-MODEL | 未换模型 | 权重不入库 | lock revision 2e1fd397… |
 
 ## 3. 重要资产详细卡
 

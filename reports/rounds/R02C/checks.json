@@ -1,0 +1,69 @@
+{
+  "schema_version": "1.0",
+  "task_id": "R02C",
+  "checks": [
+    {
+      "check_id": "C00-git-identity",
+      "command": "git rev-parse --abbrev-ref HEAD; git merge-base --is-ancestor 148f59948200bfe5d25a30c8c5115f613dc4f9fb HEAD",
+      "started_at": "2026-09-18T03:30:00+00:00",
+      "finished_at": "2026-09-18T03:30:05+00:00",
+      "exit_code": 0,
+      "status": "passed",
+      "notes": "branch research/naacl2027-r02; ancestor ok; origin skadiscarlet/iclr"
+    },
+    {
+      "check_id": "C01-diagnose-output",
+      "command": "python -m sbs diagnose-output --task R02C --run-index reports/rounds/R02B/run_index.json",
+      "started_at": "2026-09-18T04:20:00+00:00",
+      "finished_at": "2026-09-18T04:20:05+00:00",
+      "exit_code": 0,
+      "status": "passed",
+      "notes": "observed_unique_events=38; model_called=false; conservative_consumed=38"
+    },
+    {
+      "check_id": "C02-unittest-output-contract",
+      "command": "python -m unittest discover -s tests/r02c_contract -v",
+      "started_at": "2026-09-18T04:10:00+00:00",
+      "finished_at": "2026-09-18T04:10:02+00:00",
+      "exit_code": 0,
+      "status": "passed",
+      "notes": "43 tests; C-T01"
+    },
+    {
+      "check_id": "C02-pytest-r02c-g0-cli-replay",
+      "command": "python -m pytest tests/sbs/test_r02c.py tests/sbs/test_g0.py tests/sbs/test_cli.py tests/sbs/test_replay.py -q",
+      "started_at": "2026-09-18T04:12:00+00:00",
+      "finished_at": "2026-09-18T04:12:15+00:00",
+      "exit_code": 0,
+      "status": "passed",
+      "notes": "C-T02–C-T18 plus G0 and R01 replay model_calls=0"
+    },
+    {
+      "check_id": "C04-validate-pilot",
+      "command": "python -m sbs validate-pilot --task R02C --manifest local_data/r02c/actor_manifest.json",
+      "started_at": "2026-09-18T04:25:00+00:00",
+      "finished_at": "2026-09-18T04:25:02+00:00",
+      "exit_code": 0,
+      "status": "passed",
+      "notes": "validated=2; opened_evaluator=false"
+    },
+    {
+      "check_id": "C04-run-pilot",
+      "command": "python -m sbs run-pilot --task R02C --config configs/r02c_pilot.lock.json",
+      "started_at": "2026-09-18T04:44:45+00:00",
+      "finished_at": "2026-09-18T04:49:52+00:00",
+      "exit_code": 0,
+      "status": "passed",
+      "notes": "E0 gate e0_schema_or_refs_failed; E1 generate_count=0; per_run=11; code_sha=4243137c57b2bee6db26662893a89e6e71b0c18f"
+    },
+    {
+      "check_id": "C05-validate-reports-pre-push",
+      "command": "python -m sbs validate-reports --round R02C --phase pre-push",
+      "started_at": "2026-09-18T04:55:00+00:00",
+      "finished_at": "2026-09-18T04:55:01+00:00",
+      "exit_code": 0,
+      "status": "passed",
+      "notes": "valid=true; delivery_status=not_pushed"
+    }
+  ]
+}

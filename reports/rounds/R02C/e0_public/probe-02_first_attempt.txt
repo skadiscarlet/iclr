@@ -1,0 +1,16 @@
+```json
+{
+  "entities": [
+    {
+      "name": "AuthoredIdentity",
+      "type": "function"
+    }
+  ],
+  "requirement": "The function identity(x) must return x unchanged.",
+  "hypothesis": "None",
+  "support_refs": [],
+  "counter_refs": [],
+  "unknowns": [],
+  "limitations": []
+}
+```

@@ -1,0 +1,57 @@
+[
+  {
+    "file": "probe-01_first_attempt.txt",
+    "bytes": 179,
+    "sha256": "sha256:1792aada8baae7a2ad59d9b1a0eaeba80d3883a44cd1c394c27f4e2705a1269c"
+  },
+  {
+    "file": "probe-02_first_attempt.txt",
+    "bytes": 283,
+    "sha256": "sha256:6cbef85be317c1064a85e3fdcb990639c22621384cb5a4eea5391b7493ce2b40"
+  },
+  {
+    "file": "probe-02_schema_reprompt.txt",
+    "bytes": 296,
+    "sha256": "sha256:ddae7bf9c64174eb7c4d6ccd068ae8d649354a80f1c4f4013e494099327d4465"
+  },
+  {
+    "file": "probe-03_first_attempt.txt",
+    "bytes": 352,
+    "sha256": "sha256:7f2616684c2513a9e235e255b535998b5c30e2d9628ef7e07556afa8a1612dad"
+  },
+  {
+    "file": "probe-03_schema_reprompt.txt",
+    "bytes": 365,
+    "sha256": "sha256:f88491ba35cfb1605e2b52ca947ee66f2250b57ca7c9b29ce2f8d67dc1e1c44f"
+  },
+  {
+    "file": "probe-04_first_attempt.txt",
+    "bytes": 140,
+    "sha256": "sha256:b7f826593e7a2f1d32df7631df63f478341f4f8ef3fd88eb49548b319c593a72"
+  },
+  {
+    "file": "probe-04_schema_reprompt.txt",
+    "bytes": 219,
+    "sha256": "sha256:ce5f3be619c7ded549846775fa0acad8b829febe2a85d38c9f53b1f2ac727eaf"
+  },
+  {
+    "file": "probe-05_first_attempt.txt",
+    "bytes": 140,
+    "sha256": "sha256:b7f826593e7a2f1d32df7631df63f478341f4f8ef3fd88eb49548b319c593a72"
+  },
+  {
+    "file": "probe-05_schema_reprompt.txt",
+    "bytes": 219,
+    "sha256": "sha256:ce5f3be619c7ded549846775fa0acad8b829febe2a85d38c9f53b1f2ac727eaf"
+  },
+  {
+    "file": "probe-06_first_attempt.txt",
+    "bytes": 148,
+    "sha256": "sha256:b86b6cf951412c8ce66807c518009750641db3fc60ad4ec372fad4c7cc6ea266"
+  },
+  {
+    "file": "probe-06_schema_reprompt.txt",
+    "bytes": 148,
+    "sha256": "sha256:b86b6cf951412c8ce66807c518009750641db3fc60ad4ec372fad4c7cc6ea266"
+  }
+]
