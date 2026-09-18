@@ -1,0 +1,19 @@
+{
+  "document_kind": "authored_probe_evaluator_only",
+  "do_not_include_in_actor_prompt": true,
+  "expected_final": {
+    "probe-04": {
+      "verdict": "supported",
+      "reason": "Returning x+1 does not implement identity."
+    },
+    "probe-05": {
+      "verdict": "refuted",
+      "reason": "The supplied code directly returns x."
+    },
+    "probe-06": {
+      "verdict": "unresolved",
+      "reason": "The delegate body is unavailable."
+    }
+  },
+  "scores_not_real_dataset_metrics": true
+}

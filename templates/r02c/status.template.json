@@ -1,0 +1,30 @@
+{
+  "document_kind": "template_not_result",
+  "task_id": "R02C",
+  "reviewed_base": "148f59948200bfe5d25a30c8c5115f613dc4f9fb",
+  "implementation_sha": null,
+  "engineering_status": "not_started",
+  "data_status": "not_started",
+  "model_run_status": "not_started",
+  "human_annotation_status": "not_checked",
+  "delivery_status": "not_pushed",
+  "review_status": "pending",
+  "counts": {
+    "legacy_reported_requests": 38,
+    "legacy_observed_requests": null,
+    "new_reservations": null,
+    "actual_new_generate_attempts": null,
+    "schema_reprompts": null,
+    "e0_valid_first_attempt": null,
+    "e0_valid_after_reprompt": null,
+    "e1_attempted_episodes": null,
+    "e1_valid_final_episodes": null,
+    "real_state_updates": null,
+    "concrete_unreviewed_logic_cards": null,
+    "human_confirmed_pairs": null
+  },
+  "semantic_metrics": null,
+  "reward": null,
+  "qv_training_status": "not_started_by_design",
+  "blockers": []
+}

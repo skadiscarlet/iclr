@@ -23,6 +23,7 @@ def test_cli_lists_required_commands() -> None:
         "prepare-pilot",
         "validate-pilot",
         "run-pilot",
+        "diagnose-output",
     ):
         assert command in result.stdout
 

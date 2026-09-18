@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0",
+  "task_id": "R02C",
+  "generation_id": "r02c-g1",
+  "gold_assisted_context": true,
+  "task_scope": "given_location_frozen_evidence",
+  "split": "dev_pilot",
+  "first_batch_pair_id": "r01-pair-01",
+  "runtime_pair_id": "r01-pair-01",
+  "runtime_instance_ids": [
+    "inst-6bf462ca01bb071f",
+    "inst-b750a376e1e3c54c"
+  ],
+  "pairs": [
+    {
+      "pair_id": "r01-pair-01",
+      "include": true,
+      "track": "conventional"
+    },
+    {
+      "pair_id": "r01-pair-12",
+      "include": true,
+      "track": "conventional"
+    },
+    {
+      "pair_id": "r01-pair-13",
+      "include": true,
+      "track": "logic_draft"
+    },
+    {
+      "pair_id": "r01-pair-15",
+      "include": true,
+      "track": "logic_draft"
+    }
+  ]
+}

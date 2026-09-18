@@ -416,6 +416,47 @@ class InstanceManifest(_ActorModel):
         return value
 
 
+class R02CPilotConfig(_ActorModel):
+    schema_version: Literal["1.0"] = "1.0"
+    document_kind: Literal["locked_runnable_config"] = "locked_runnable_config"
+    mode: Literal["frozen_model_pilot"]
+    task_id: Literal["R02C"]
+    seed: int
+    split: SplitId
+    representations: list[Literal["history", "sbs"]]
+    max_input_tokens_including_chat: int
+    max_new_tokens: int
+    note_reserve_tokens: int = 512
+    batch_size: Literal[1] = 1
+    do_sample: Literal[False] = False
+    project_request_cap: Literal[192] = 192
+    task_request_cap: int
+    max_inference_wall_seconds: int
+    max_regenerations_per_logical_request: Literal[1] = 1
+    regeneration_kind: Literal["schema_reprompt_not_semantics_preserving"]
+    paid_budget_usd: Literal[0] = 0
+    enable_training: Literal[False] = False
+    enable_branch_rollouts: Literal[False] = False
+    trust_remote_code: Literal[False] = False
+    actor_manifest_relative_path: str
+    run_output_root: str = "artifacts/r02c/runs"
+    request_ledger_relative_path: str = "artifacts/r02c/request_ledger.jsonl"
+    legacy_accounting_snapshot_relative_path: str = (
+        "reports/rounds/R02C/legacy_request_reconciliation.json"
+    )
+    e0_cases_relative_path: str = "fixtures/r02c_e0/actor_cases.jsonl"
+    e0_evaluator_relative_path: str = "fixtures/r02c_e0/evaluator_expectations.json"
+    frozen_e1_instance_ids: list[str]
+    frozen_schedule: list[str]
+    prompt_protocol: Literal["r02c-v1"] = "r02c-v1"
+    actual_implementation_sha: str | None = None
+    actor_manifest_sha256: str | None = None
+    model: dict[str, Any]
+    schemas: dict[str, str] | None = None
+    public_evidence_policy: Literal["common_rendered_blocks"] = "common_rendered_blocks"
+    semantic_scoring_requires_human_review: Literal[True] = True
+
+
 class FrozenPilotConfig(_ActorModel):
     schema_version: Literal["1.0"] = "1.0"
     mode: Literal["frozen_model_pilot"]
@@ -449,7 +490,7 @@ class FrozenPilotConfig(_ActorModel):
 class FrozenPilotManifest(_ActorModel):
     schema_version: Literal["1.0"] = "1.0"
     mode: Literal["frozen_model_pilot"]
-    task_id: Literal["R02B"]
+    task_id: Literal["R02B", "R02C"]
     seed: int
     split: SplitId
     representations: list[Literal["history", "sbs"]]
@@ -496,6 +537,21 @@ def parse_frozen_pilot_config(payload: Any) -> FrozenPilotConfig:
         if key not in {"document_kind", "env_probe"}
     }
     return FrozenPilotConfig.model_validate(data)
+
+
+def parse_r02c_pilot_config(payload: Any) -> R02CPilotConfig:
+    if not isinstance(payload, dict):
+        raise ValueError("pilot config must be an object")
+    if payload.get("document_kind") in {
+        "template_not_runnable",
+        "template_not_runnable_until_locked",
+    }:
+        raise ValueError("pilot template is not a locked config")
+    if payload.get("task_id") != "R02C":
+        raise ValueError("R02C config task_id must be R02C")
+    allowed = set(R02CPilotConfig.model_fields)
+    data = {key: payload[key] for key in allowed if key in payload}
+    return R02CPilotConfig.model_validate(data)
 
 
 def load_instance_manifest_payload(payload: Any) -> InstanceManifest:

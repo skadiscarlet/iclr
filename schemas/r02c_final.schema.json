@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "R02C final",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "hypothesis": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    },
+    "verdict": {
+      "type": "string",
+      "enum": [
+        "supported",
+        "refuted",
+        "unresolved"
+      ]
+    },
+    "support_refs": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "uniqueItems": true
+    },
+    "counter_refs": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      },
+      "uniqueItems": true
+    },
+    "unknowns": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1024
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1024
+      }
+    }
+  },
+  "required": [
+    "hypothesis",
+    "verdict",
+    "support_refs",
+    "counter_refs",
+    "unknowns",
+    "limitations"
+  ]
+}

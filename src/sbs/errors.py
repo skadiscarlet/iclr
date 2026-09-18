@@ -63,5 +63,13 @@ class PilotBudgetError(ValueError):
     """Request would exceed the persisted hard cap."""
 
 
+class OutputContractError(ValueError):
+    """Model output failed the strict R02C contract; state is unchanged."""
+
+
+class RoundCompleteError(PilotBudgetError):
+    """R02C round already finished; new generate is refused."""
+
+
 class ContextInsufficientError(ValueError):
     """Shared context budget cannot keep required public evidence."""

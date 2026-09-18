@@ -1,0 +1,38 @@
+{
+  "document_kind": "template_not_runnable",
+  "task_id": "R02C",
+  "mode": "frozen_model_pilot",
+  "split": "dev_pilot",
+  "model": {
+    "repo_id": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
+    "resolved_revision": "2e1fd397ee46e1388853d2af2c993145b0f1098a",
+    "device": "cpu",
+    "dtype": "float32",
+    "trust_remote_code": false,
+    "local_files_only": true
+  },
+  "seed": 17,
+  "do_sample": false,
+  "batch_size": 1,
+  "max_input_tokens_including_chat": 3072,
+  "max_new_tokens": 512,
+  "note_reserve_tokens": 512,
+  "project_request_cap": 192,
+  "task_request_cap": 48,
+  "max_inference_wall_seconds": 3600,
+  "max_regenerations_per_logical_request": 1,
+  "regeneration_kind": "schema_reprompt_not_semantics_preserving",
+  "paid_budget_usd": 0,
+  "enable_training": false,
+  "enable_branch_rollouts": false,
+  "actor_manifest_relative_path": null,
+  "actual_implementation_sha": null,
+  "prompt_protocol": "r02c-v1",
+  "request_ledger_relative_path": "artifacts/r02c/request_ledger.jsonl",
+  "legacy_accounting_snapshot_relative_path": null,
+  "schemas": {
+    "history_note": "schemas/r02c_history_note.schema.json",
+    "sbs_note": "schemas/r02c_sbs_note.schema.json",
+    "final": "schemas/r02c_final.schema.json"
+  }
+}

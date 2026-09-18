@@ -1,8 +1,8 @@
 # 项目级 Agent 指令
 
-## 当前任务路由（NAACL R02B，限定）
+## 当前任务路由（NAACL R02C，限定）
 
-当当前 `/goal` 或 `plans/CURRENT_TASK.json` 的 `task_id` 为 **R02B** 时，以 `plans/rounds/R02B.md` 与 `plans/EXECUTION_CONTRACT.md` 为最高优先级。R01/R02A 的「零模型调用」约束仅属于历史轮次，不阻止本轮有界本地冻结推理。旧 ICLR/EGSI 规范仅用于复用已有代码与数据映射，不要求把全套旧系统实现完。R01 历史文件、零调用 fixture 回放路径与 actor/evaluator 隔离规则仍然有效；本段不删除下文历史内容。本轮不训练 Q/V，不做新漏洞发现。
+当当前 `/goal` 或 `plans/CURRENT_TASK.json` 的 `task_id` 为 **R02C** 时，以 `plans/rounds/R02C.md` 与 `plans/EXECUTION_CONTRACT.md` 为最高优先级。若其他历史门限或 EGSI/ICLR 全套实现要求与 R02C 冲突，以 R02C 为准。R01/R02A 的「零模型调用」约束与 R02B 的失败输出仅属历史：本轮允许有界本地冻结推理，但不训练 Q/V、不更换模型、不扩数据集、不把 R02B 失败改写成从未失败。旧 ICLR/EGSI 规范仅用于复用已有代码与数据映射。R01 历史文件、零调用 fixture 回放路径与 actor/evaluator 隔离规则仍然有效；本段不删除下文历史内容。
 
 ## 当前阶段
 

@@ -1,0 +1,73 @@
+{
+  "actor_manifest_relative_path": "local_data/r02c/actor_manifest.json",
+  "actor_manifest_sha256": "sha256:79680993a0090f873b7c6031775dd11ab143b31f61d10dccb9bcf0b43499a5f3",
+  "actual_implementation_sha": null,
+  "batch_size": 1,
+  "do_sample": false,
+  "document_kind": "locked_runnable_config",
+  "e0_cases_relative_path": "fixtures/r02c_e0/actor_cases.jsonl",
+  "e0_evaluator_relative_path": "fixtures/r02c_e0/evaluator_expectations.json",
+  "enable_branch_rollouts": false,
+  "enable_training": false,
+  "frozen_e1_instance_ids": [
+    "inst-6bf462ca01bb071f",
+    "inst-b750a376e1e3c54c"
+  ],
+  "frozen_schedule": [
+    "form",
+    "read_0",
+    "read_1_or_none",
+    "final"
+  ],
+  "gold_assisted_context": true,
+  "legacy_accounting_snapshot_relative_path": "reports/rounds/R02C/legacy_request_reconciliation.json",
+  "locked_at": "2026-09-18T04:36:05+00:00",
+  "material_generation_id": "r02c-g1",
+  "max_inference_wall_seconds": 3600,
+  "max_input_tokens_including_chat": 3072,
+  "max_new_tokens": 512,
+  "max_regenerations_per_logical_request": 1,
+  "mode": "frozen_model_pilot",
+  "model": {
+    "chat_template_sha256": "sha256:959e7f1d9a1b7641a6d6ce05ca97b75c7894fcb66cbe5a040406458fb1128ee4",
+    "device": "cpu",
+    "dtype": "float32",
+    "repo_id": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
+    "resolved_revision": "2e1fd397ee46e1388853d2af2c993145b0f1098a",
+    "tokenizer_sha256": "sha256:c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539",
+    "trust_remote_code": false,
+    "use_safetensors": true,
+    "weights_manifest_sha256": "sha256:c1b9b30e907950516ba3c646bdf570d8084c25a6410a0cdca80cf04b11bc13a8"
+  },
+  "note_reserve_tokens": 512,
+  "paid_budget_usd": 0,
+  "project_request_cap": 192,
+  "prompt_protocol": "r02c-v1",
+  "public_evidence_policy": "common_rendered_blocks",
+  "regeneration_kind": "schema_reprompt_not_semantics_preserving",
+  "representations": [
+    "history",
+    "sbs"
+  ],
+  "request_ledger_relative_path": "artifacts/r02c/request_ledger.jsonl",
+  "run_output_root": "artifacts/r02c/runs",
+  "schema_file_sha256": {
+    "final": "sha256:5788b10781dffebeef463a2cfc1423454f938a83dd91005e9ea9a6ffb044a8e0",
+    "history_note": "sha256:1e3b1a40c4935610bd6e77ee5670487832360601767f8df585ade8c016ad7546",
+    "sbs_note": "sha256:aab838d97531802d51024c426b7494792305b11ae80353f00e60e5705a628e2b"
+  },
+  "schema_version": "1.0",
+  "schemas": {
+    "final": "schemas/r02c_final.schema.json",
+    "history_note": "schemas/r02c_history_note.schema.json",
+    "sbs_note": "schemas/r02c_sbs_note.schema.json"
+  },
+  "seed": 17,
+  "semantic_scoring_requires_human_review": true,
+  "single_evidence_interface_pilot": true,
+  "split": "dev_pilot",
+  "task_id": "R02C",
+  "task_request_cap": 48,
+  "task_scope": "given_location_frozen_evidence",
+  "trust_remote_code": false
+}

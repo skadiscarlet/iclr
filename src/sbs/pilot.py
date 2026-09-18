@@ -48,6 +48,8 @@ def _now() -> str:
 
 def load_pilot_config(path: Path) -> FrozenPilotConfig:
     payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    if payload.get("task_id") == "R02C":
+        raise PilotConfigError("use load_r02c_config / run_r02c_pilot for R02C")
     config = parse_frozen_pilot_config(payload)
     if config.mode != "frozen_model_pilot":
         raise PilotConfigError("mode must be frozen_model_pilot")
@@ -336,6 +338,70 @@ class FrozenModel:
             "input_tokens": input_len,
             "output_tokens": int(generated.shape[-1]),
             "request_sha256": sha256_text(prompt),
+        }
+
+    def generate_chat(
+        self,
+        messages: list[dict[str, str]],
+        max_new_tokens: int,
+        seed: int,
+        max_input_tokens: int = 3072,
+    ) -> dict[str, Any]:
+        import torch
+
+        from sbs.tokens import count_chat_tokens
+
+        torch.manual_seed(seed)
+        n_ids, ids, method = count_chat_tokens(
+            self.tokenizer, messages, add_generation_prompt=True
+        )
+        try:
+            tensor = self.tokenizer.apply_chat_template(
+                messages,
+                tokenize=True,
+                add_generation_prompt=True,
+                return_tensors="pt",
+            )
+            if hasattr(tensor, "to"):
+                input_ids = tensor.to(self.device)
+            else:
+                input_ids = torch.tensor(ids, dtype=torch.long).unsqueeze(0).to(self.device)
+        except TypeError:
+            text = self.tokenizer.apply_chat_template(
+                messages, tokenize=False, add_generation_prompt=True
+            )
+            encoded = self.tokenizer(text, return_tensors="pt", add_special_tokens=False)
+            input_ids = encoded["input_ids"].to(self.device)
+            method = "template_text_then_encode_no_special"
+        if input_ids.dim() == 1:
+            input_ids = input_ids.unsqueeze(0)
+        input_len = int(input_ids.shape[-1])
+        if input_len > max_input_tokens:
+            return {
+                "text": "",
+                "input_tokens": input_len,
+                "output_tokens": 0,
+                "request_sha256": sha256_text(json.dumps(messages, sort_keys=True)),
+                "blocked": "context_insufficient",
+                "count_method": method,
+            }
+        with torch.no_grad():
+            out = self.model.generate(
+                input_ids=input_ids,
+                max_new_tokens=max_new_tokens,
+                do_sample=False,
+            )
+        generated = out[0][input_len:]
+        raw = self.tokenizer.decode(generated, skip_special_tokens=True)
+        return {
+            "text": raw,
+            "input_tokens": input_len,
+            "output_tokens": int(generated.shape[-1]),
+            "request_sha256": sha256_text(json.dumps(messages, sort_keys=True)),
+            "count_method": method,
+            "input_token_ids_sha256": sha256_bytes(
+                canonical_json_bytes([int(x) for x in input_ids[0].tolist()])
+            ),
         }
 
 
@@ -712,6 +778,11 @@ def run_pilot(
     phase: str = "auto",
 ) -> dict[str, Any]:
     workspace = Path(workspace)
+    peek = json.loads(Path(config_path).read_text(encoding="utf-8"))
+    if peek.get("task_id") == "R02C":
+        from sbs.r02c_pilot import run_r02c_pilot
+
+        return run_r02c_pilot(workspace, config_path, code_sha=code_sha, phase=phase)
     config = load_pilot_config(config_path)
     actor_manifest_path = workspace / config.actor_manifest_relative_path
     if not actor_manifest_path.is_file():

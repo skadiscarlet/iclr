@@ -30,6 +30,19 @@ R02B_REQUIRED_FILES = (
     "ANALYSIS.md",
 )
 
+R02C_REQUIRED_FILES = (
+    "SUMMARY.md",
+    "status.json",
+    "checks.json",
+    "OUTPUT_DIAGNOSIS.md",
+    "output_diagnosis.json",
+    "DATA_REVIEW.md",
+    "HUMAN_CHECK.md",
+    "legacy_request_reconciliation.json",
+    "run_index.json",
+    "ANALYSIS.md",
+)
+
 MIGRATION_HEADER = [
     "path",
     "decision",
@@ -188,11 +201,90 @@ def validate_r02b_reports(repo: Path, phase: str) -> dict[str, Any]:
     }
 
 
+def validate_r02c_status(payload: dict[str, Any], *, phase: str) -> None:
+    if payload.get("schema_version") not in {"1.0", "2.0"}:
+        raise ValueError("status.schema_version must be 1.0 or 2.0")
+    if payload.get("task_id") != "R02C" and payload.get("round_id") != "R02C":
+        raise ValueError("status task_id/round_id must be R02C")
+    if payload.get("review_status") != "pending":
+        raise ValueError("agent must leave review_status=pending")
+    if payload.get("training_status") != "not_started_by_design" and payload.get(
+        "qv_training_status"
+    ) not in {"not_started_by_design", None}:
+        if payload.get("qv_training_status") != "not_started_by_design":
+            raise ValueError("qv training must remain not_started_by_design")
+    if payload.get("semantic_metrics") not in (None,):
+        raise ValueError("semantic_metrics must be null")
+    if payload.get("reward") not in (None,):
+        raise ValueError("reward must be null")
+    if payload.get("human_annotation_status") == "verified_by_agent":
+        raise ValueError("agent cannot set human annotation verified")
+    if phase == "pre-push" and payload.get("delivery_status") in {
+        "checkpoint_verified",
+        "completed",
+    }:
+        raise ValueError("pre-push status cannot claim remote checkpoint")
+
+
+def validate_r02c_reports(repo: Path, phase: str) -> dict[str, Any]:
+    if phase not in {"pre-push", "post-push"}:
+        raise ValueError("phase must be pre-push or post-push")
+    round_dir = Path(repo) / "reports" / "rounds" / "R02C"
+    missing = [name for name in R02C_REQUIRED_FILES if not (round_dir / name).is_file()]
+    receipt = round_dir / "push_receipt.json"
+    latest = Path(repo) / "reports" / "latest.json"
+    if not latest.is_file():
+        missing.append("reports/latest.json")
+    if phase == "post-push" and not receipt.is_file():
+        missing.append("push_receipt.json")
+    if missing:
+        raise FileNotFoundError("missing report files: " + ", ".join(missing))
+    status = _load_json(round_dir / "status.json")
+    validate_r02c_status(status, phase=phase)
+    checks = _load_json(round_dir / "checks.json")
+    validate_checks(checks)
+    run_index = _load_json(round_dir / "run_index.json")
+    if "runs" not in run_index:
+        raise ValueError("run_index.json must contain runs")
+    recon = _load_json(round_dir / "legacy_request_reconciliation.json")
+    if recon.get("conservative_consumed_for_new_call_limit") is None:
+        raise ValueError("legacy reconciliation missing conservative consumed")
+    latest_payload = _load_json(latest)
+    if latest_payload.get("task_id") != "R02C" and latest_payload.get("round_id") != "R02C":
+        raise ValueError("latest.json must point at R02C as current task")
+    if latest_payload.get("review_status") != "pending":
+        raise ValueError("latest.json review_status must be pending")
+    if "latest_research_run" not in latest_payload:
+        raise ValueError("latest.json must keep latest_research_run distinct from task_id")
+    if phase == "post-push":
+        receipt_payload = _load_json(receipt)
+        if receipt_payload.get("remote_sha_match") not in {"yes", "no", "not_verified"}:
+            raise ValueError("push_receipt.remote_sha_match invalid")
+        receipt_sha = receipt_payload.get("receipt_sha")
+        final_sha = receipt_payload.get("final_pushed_sha")
+        if receipt_sha and final_sha and receipt_sha == final_sha:
+            raise ValueError("push_receipt must not self-hash C")
+    return {
+        "valid": True,
+        "phase": phase,
+        "round_id": "R02C",
+        "status": {
+            "engineering_status": status.get("engineering_status"),
+            "data_status": status.get("data_status"),
+            "model_run_status": status.get("model_run_status"),
+            "delivery_status": status.get("delivery_status"),
+            "review_status": status.get("review_status"),
+        },
+    }
+
+
 def validate_reports(repo: Path, round_id: str, phase: str) -> dict[str, Any]:
+    if round_id == "R02C":
+        return validate_r02c_reports(repo, phase)
     if round_id == "R02B":
         return validate_r02b_reports(repo, phase)
     if round_id != "R01":
-        raise ValueError("only R01 and R02B are implemented")
+        raise ValueError("only R01, R02B and R02C are implemented")
     if phase not in {"pre-push", "post-push"}:
         raise ValueError("phase must be pre-push or post-push")
     round_dir = Path(repo) / "reports" / "rounds" / round_id

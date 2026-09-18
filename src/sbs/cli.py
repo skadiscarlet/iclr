@@ -1,4 +1,4 @@
-"""SBS CLI: R01 fixture replay plus R02B prepare/validate/run-pilot."""
+"""SBS CLI: R01 fixture replay plus R02B/R02C prepare/validate/run-pilot."""
 
 from __future__ import annotations
 
@@ -127,6 +127,30 @@ def replay(
     )
 
 
+@app.command("diagnose-output")
+def diagnose_output_cmd(
+    task: str = typer.Option("R02C", "--task", help="Task id."),
+    run_index: Path = typer.Option(
+        Path("reports/rounds/R02B/run_index.json"),
+        "--run-index",
+        help="Registered R02B run index.",
+    ),
+) -> None:
+    """Offline layered diagnosis of registered R02B outputs. Zero model calls."""
+
+    if task != "R02C":
+        typer.echo("Error: only R02C diagnose-output is implemented", err=True)
+        raise typer.Exit(code=1)
+    from sbs.diagnose import diagnose_output
+
+    try:
+        result = diagnose_output(_repo_root(), run_index)
+    except Exception as exc:
+        typer.echo(f"Error: diagnose-output failed: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(json.dumps(result, sort_keys=True, default=str))
+
+
 @app.command("prepare-pilot")
 def prepare_pilot_cmd(
     task: str = typer.Option("R02B", "--task", help="Task id."),
@@ -138,8 +162,18 @@ def prepare_pilot_cmd(
 ) -> None:
     """Build version-bound actor packs from the locked selection. No model call."""
 
+    if task == "R02C":
+        from sbs.r02c_prepare import prepare_r02c_pilot
+
+        try:
+            result = prepare_r02c_pilot(_repo_root(), selection)
+        except Exception as exc:
+            typer.echo(f"Error: prepare-pilot failed: {exc}", err=True)
+            raise typer.Exit(code=1) from exc
+        typer.echo(json.dumps(result, sort_keys=True, default=str))
+        return
     if task != "R02B":
-        typer.echo("Error: only R02B prepare-pilot is implemented", err=True)
+        typer.echo("Error: only R02B/R02C prepare-pilot is implemented", err=True)
         raise typer.Exit(code=1)
     try:
         result = prepare_pilot(_repo_root(), selection, allow_root_symlink=True)
@@ -160,8 +194,20 @@ def validate_pilot_cmd(
 ) -> None:
     """Validate actor packs. Must not call a model."""
 
+    if task == "R02C":
+        from sbs.r02c_prepare import validate_r02c_manifest
+
+        try:
+            result = validate_r02c_manifest(_repo_root(), manifest)
+        except Exception as exc:
+            typer.echo(f"Error: validate-pilot failed: {exc}", err=True)
+            raise typer.Exit(code=1) from exc
+        if result.get("model_called"):
+            raise typer.Exit(code=2)
+        typer.echo(json.dumps(result, sort_keys=True))
+        return
     if task != "R02B":
-        typer.echo("Error: only R02B validate-pilot is implemented", err=True)
+        typer.echo("Error: only R02B/R02C validate-pilot is implemented", err=True)
         raise typer.Exit(code=1)
     try:
         result = validate_pilot_manifest(_repo_root(), manifest)
@@ -184,12 +230,13 @@ def run_pilot_cmd(
 ) -> None:
     """Run the bounded local frozen-model pilot."""
 
-    if task != "R02B":
-        typer.echo("Error: only R02B run-pilot is implemented", err=True)
+    if task not in {"R02B", "R02C"}:
+        typer.echo("Error: only R02B/R02C run-pilot is implemented", err=True)
         raise typer.Exit(code=1)
     repo = _repo_root()
     try:
-        load_pilot_config(config)
+        if task == "R02B":
+            load_pilot_config(config)
         result = run_pilot(repo, config, code_sha=_git_head(repo))
     except Exception as exc:
         typer.echo(f"Error: run-pilot failed: {exc}", err=True)

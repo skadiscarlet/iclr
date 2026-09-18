@@ -1,0 +1,41 @@
+{
+  "conservative_consumed_for_new_call_limit": 38,
+  "duplicate_ledger_copies_counted_once": true,
+  "historical_baseline_relative_path": "reports/rounds/R02C/legacy_request_reconciliation.json",
+  "identical_raw_hash_still_two_calls": true,
+  "model_called": false,
+  "new_ledger_does_not_contain_forged_historical_reservations": true,
+  "new_ledger_relative_path": "artifacts/r02c/request_ledger.jsonl",
+  "observed_unique_events": 38,
+  "reconciled_consumed_lower": 38,
+  "reconciled_consumed_upper": 38,
+  "registered_runs": [
+    {
+      "code_sha": "pre-A",
+      "kind": "e0_preflight",
+      "observed_requests": 2,
+      "relative_dir": "artifacts/r02b/runs/2026-09-17T140949+0000",
+      "reported_requests": 2,
+      "run_id": "2026-09-17T140949+0000"
+    },
+    {
+      "code_sha": "59301b66c98cdb960bc35550939d0c0fcecbefd7",
+      "kind": "e0_plus_first_batch",
+      "observed_requests": 18,
+      "relative_dir": "artifacts/r02b/runs/2026-09-17T141202+0000",
+      "reported_requests": 18,
+      "run_id": "2026-09-17T141202+0000"
+    },
+    {
+      "code_sha": "59301b66c98cdb960bc35550939d0c0fcecbefd7",
+      "kind": "repeat_e0_plus_first_batch",
+      "observed_requests": 18,
+      "relative_dir": "artifacts/r02b/runs/2026-09-17T142041+0000",
+      "reported_requests": 18,
+      "run_id": "2026-09-17T142041+0000"
+    }
+  ],
+  "reported_lower_bound": 38,
+  "task_id": "R02C",
+  "uncertainty": "none"
+}
