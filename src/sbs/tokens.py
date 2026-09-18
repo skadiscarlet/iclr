@@ -81,6 +81,14 @@ def count_chat_tokens(
 
 
 def _coerce_id_list(encoded: object) -> list[int]:
+    if isinstance(encoded, dict) or (hasattr(encoded, "keys") and not isinstance(encoded, (list, tuple, str))):
+        try:
+            if "input_ids" in encoded:  # type: ignore[operator]
+                encoded = encoded["input_ids"]  # type: ignore[index]
+        except Exception:
+            pass
+    if hasattr(encoded, "detach"):
+        encoded = encoded.detach().cpu()
     if hasattr(encoded, "tolist"):
         encoded = encoded.tolist()
     if isinstance(encoded, list) and encoded and isinstance(encoded[0], list):

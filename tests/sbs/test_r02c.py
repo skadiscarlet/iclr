@@ -24,7 +24,7 @@ from sbs.r02c_prepare import prepare_r02c_pilot, validate_r02c_manifest
 from sbs.r02c_state import refs_from_ids
 from sbs.schema import LineSpan, VisibleEvidence, sha256_bytes, sha256_text
 from sbs.static_check import build_version_bound_actor_view
-from sbs.tokens import CharChatTokenCounter
+from sbs.tokens import CharChatTokenCounter, count_chat_tokens
 
 
 REPO = Path(__file__).resolve().parents[2]
@@ -281,6 +281,22 @@ def _e0_pass_scripts() -> list[str]:
         _final(verdict="refuted", counter_refs=["ev-probe-05"], unknowns=[]),
         _final(verdict="unresolved"),
     ]
+
+
+def test_count_chat_tokens_accepts_batch_encoding_mapping() -> None:
+    class Tok:
+        def apply_chat_template(self, messages, tokenize=True, add_generation_prompt=True):
+            if tokenize:
+                return {"input_ids": [11, 12, 13]}
+            return "unused"
+
+        def encode(self, text, add_special_tokens=False):
+            raise AssertionError("tokenize=True path must not fall back")
+
+    count, ids, how = count_chat_tokens(Tok(), [{"role": "user", "content": "hi"}])
+    assert count == 3
+    assert ids == [11, 12, 13]
+    assert how == "apply_chat_template_tokenize_true"
 
 
 def test_ct02_layered_reject_no_repair() -> None:
