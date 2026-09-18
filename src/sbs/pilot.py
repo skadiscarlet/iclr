@@ -355,6 +355,7 @@ class FrozenModel:
         n_ids, ids, method = count_chat_tokens(
             self.tokenizer, messages, add_generation_prompt=True
         )
+        attention_mask = None
         try:
             tensor = self.tokenizer.apply_chat_template(
                 messages,
@@ -362,16 +363,26 @@ class FrozenModel:
                 add_generation_prompt=True,
                 return_tensors="pt",
             )
-            if hasattr(tensor, "to"):
-                input_ids = tensor.to(self.device)
+            if hasattr(tensor, "keys") and "input_ids" in tensor:
+                input_ids = tensor["input_ids"]
+                attention_mask = tensor.get("attention_mask") if hasattr(tensor, "get") else tensor["attention_mask"] if "attention_mask" in tensor else None
+            elif hasattr(tensor, "to") and hasattr(tensor, "dim"):
+                input_ids = tensor
             else:
-                input_ids = torch.tensor(ids, dtype=torch.long).unsqueeze(0).to(self.device)
+                input_ids = torch.tensor(ids, dtype=torch.long).unsqueeze(0)
+            if hasattr(input_ids, "to"):
+                input_ids = input_ids.to(self.device)
+            if attention_mask is not None and hasattr(attention_mask, "to"):
+                attention_mask = attention_mask.to(self.device)
         except TypeError:
             text = self.tokenizer.apply_chat_template(
                 messages, tokenize=False, add_generation_prompt=True
             )
             encoded = self.tokenizer(text, return_tensors="pt", add_special_tokens=False)
             input_ids = encoded["input_ids"].to(self.device)
+            attention_mask = encoded.get("attention_mask")
+            if attention_mask is not None:
+                attention_mask = attention_mask.to(self.device)
             method = "template_text_then_encode_no_special"
         if input_ids.dim() == 1:
             input_ids = input_ids.unsqueeze(0)
@@ -385,12 +396,11 @@ class FrozenModel:
                 "blocked": "context_insufficient",
                 "count_method": method,
             }
+        gen_kwargs = {"input_ids": input_ids, "max_new_tokens": max_new_tokens, "do_sample": False}
+        if attention_mask is not None:
+            gen_kwargs["attention_mask"] = attention_mask
         with torch.no_grad():
-            out = self.model.generate(
-                input_ids=input_ids,
-                max_new_tokens=max_new_tokens,
-                do_sample=False,
-            )
+            out = self.model.generate(**gen_kwargs)
         generated = out[0][input_len:]
         raw = self.tokenizer.decode(generated, skip_special_tokens=True)
         return {

@@ -323,7 +323,12 @@ def _logical_generate(
             err_path = out_dir / f"{stem}_{attempt}.error.json"
             _write_json(
                 err_path,
-                {"error": type(exc).__name__, "seq": seq, "attempt": attempt},
+                {
+                    "error": type(exc).__name__,
+                    "error_message": str(exc)[:500],
+                    "seq": seq,
+                    "attempt": attempt,
+                },
             )
             row.update(
                 {
@@ -1031,8 +1036,19 @@ def run_r02c_pilot(
     _write_json(run_root / "summary.json", summary)
     snapshot = run_root / "request_ledger.jsonl"
     snapshot.write_bytes(ledger.path.read_bytes())
+    e0_txts = list((run_root / "e0").glob("*.txt"))
+    e0_errs = list((run_root / "e0").glob("*error.json"))
+    executor_only_failures = (
+        per_run > 0
+        and bool(e0_errs)
+        and (not e0_txts or all(path.stat().st_size == 0 for path in e0_txts))
+    )
     _write_json(
         status_path,
-        {"status": "complete", "run_dir": str(run_root), "finished_at": _now()},
+        {
+            "status": "incomplete_executor_error" if executor_only_failures else "complete",
+            "run_dir": str(run_root),
+            "finished_at": _now(),
+        },
     )
     return summary
